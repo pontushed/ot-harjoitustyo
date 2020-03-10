@@ -1,8 +1,7 @@
 # Ohjelmointitekniikka kevät 2020, harjoitustyö
 
----
 ## Tehtävät
----
+
 ### Viikko 1
 
 Tänne tulee **laskareiden** tehtäviä.
