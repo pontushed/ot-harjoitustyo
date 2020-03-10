@@ -2,8 +2,8 @@
 
 ## Sovelluksen tarkoitus
 
-Sovelluksen avulla käyttäjät voivat ehdottaa vaihtoja työvuorolistaan sekä tarkistaa työvuoronsa. Sovellus huolehtii siitä, että sekä TESin että työaikalainsäädännön mukaisia lepoaikasäännöksiä noudatetaan. Ohjelman
-päämääränä on tarjota käyttäjille helppo tapa yhdistää kysyntä ja tarjonta vuoronvaihtojen toteutumiseksi. Sovellus
+Sovelluksen avulla käyttäjät voivat ehdottaa vaihtoja työvuorolistaan sekä tarkistaa työvuoronsa. Sovellus huolehtii siitä, että sekä TESin että työaikalainsäädännön mukaisia lepoaikasäännöksiä noudatetaan. Sovelluksen
+päämääränä on tarjota käyttäjille helppo tapa yhdistää kysyntä ja tarjonta vuoronvaihtojen toteutumiseksi.
 
 ## Käyttäjät
 
@@ -11,9 +11,9 @@ Alkuvaiheessa sovelluksella on ainoastaan yksi käyttäjärooli eli _normaali k�
 
 ## Käyttöliittymäluonnos
 
-Sovellus koostuu kolmesta eri näkymästä
-
 Sovellus aukeaa kirjautumisnäkymään, josta on mahdollista siirtyä uuden käyttäjän luomisnäkymään tai onnistuneen kirjautumisen yhteydessä kirjaantuneen käyttäjän työvuorolistaan.
+
+Työvuorolistassa voi ottaa yhden työvuoron muutostoiveen kohteeksi. Sovellus avaa näkymän, jossa haetaan vaihtokandidaatit. Käyttäjä voi tehdä muutostoiveen tässä näkymässä.
 
 ## Perusversion tarjoama toiminnallisuus
 
