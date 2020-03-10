@@ -1,0 +1,70 @@
+commit 352c72879c02980a4bd89dcf1a9ae2ccde04265f
+Author: Pontus <pontus.hedlund@gmail.com>
+Date:   Tue Mar 10 20:34:04 2020 +0200
+
+    harjoittelua..
+
+ tiedostoja/file2             | 0
+ tiedostoja/{file1 => file22} | 0
+ 2 files changed, 0 insertions(+), 0 deletions(-)
+
+commit a9fb951f17b9dca3fec285237d72e998fdfed470
+Author: Pontus <pontus.hedlund@gmail.com>
+Date:   Tue Mar 10 20:33:06 2020 +0200
+
+    harjoittelua taas
+
+ tiedostoja/file3 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit abe9777df000fb80472a191b2df6b973346f555b
+Author: Pontus <pontus.hedlund@gmail.com>
+Date:   Tue Mar 10 20:31:59 2020 +0200
+
+    harjoittelua
+
+ tiedosto.txt => eka.txt | 0
+ tiedostoja/file1        | 0
+ tiedostoja/file2        | 0
+ tiedostoja/file3        | 1 +
+ 4 files changed, 1 insertion(+)
+
+commit 3ebc95be688ba1c359a64f9515ced35aef10c948
+Author: Pontus <pontus.hedlund@gmail.com>
+Date:   Tue Mar 10 20:28:43 2020 +0200
+
+    tiedoston poistaminen ja uudelleennimentä
+
+ toinen.txt | 1 -
+ 1 file changed, 1 deletion(-)
+
+commit 8d38bcb6de4517a72a4cf546c22fe5f1351ad128
+Author: Pontus <pontus.hedlund@gmail.com>
+Date:   Tue Mar 10 20:27:37 2020 +0200
+
+    lisää harjoittelua
+
+ kolmas.txt               | 1 +
+ stuff/jokin_tiedosto.txt | 0
+ toinen.txt               | 1 +
+ 3 files changed, 2 insertions(+)
+
+commit af5552a1a3346175b65ef81dba71b6945b3ce6bd
+Author: Pontus <pontus.hedlund@gmail.com>
+Date:   Tue Mar 10 20:26:51 2020 +0200
+
+    kolmas lisätty
+
+ kolmas.txt   | 0
+ tiedosto.txt | 1 +
+ toinen.txt   | 0
+ 3 files changed, 1 insertion(+)
+
+commit bf28c242d781d92e804aa48144d6460c063eb00a
+Author: Pontus <pontus.hedlund@gmail.com>
+Date:   Tue Mar 10 20:25:24 2020 +0200
+
+    tiedosto.txt luotu
+
+ tiedosto.txt | 0
+ 1 file changed, 0 insertions(+), 0 deletions(-)
