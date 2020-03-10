@@ -157,4 +157,12 @@ public class KassapaateTest {
         assertEquals(101000,kassa.kassassaRahaa());
         assertEquals(2000,kortti.saldo());
     }
+    // Kortille ei voi ladata negatiivista saldoa
+    @Test
+    public void kortilleEiNegatiivista() {
+        Maksukortti kortti = new Maksukortti(1000);
+        kassa.lataaRahaaKortille(kortti, -1000);
+        assertEquals(100000,kassa.kassassaRahaa());
+        assertEquals(1000,kortti.saldo());
+    }    
 }
