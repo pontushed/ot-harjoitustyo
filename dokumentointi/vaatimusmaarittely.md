@@ -39,7 +39,7 @@ Työvuorolistassa voi ottaa yhden työvuoron muutostoiveen kohteeksi. Sovellus a
 
 - käyttäjä näkee, onko hänelle tullut vuoronvaihtoehdotuksia. Sovellus huolehtii, että lepoaikamääräykset toteutuvat kaikissa tapauksissa.
 
-- hyväksyessään vuoronvaihtoehdotuksen, muuttuuvat vuorot työvuorolistassa.
+- hyväksyessään vuoronvaihtoehdotuksen, muuttuvat vuorot työvuorolistassa.
 
 - käyttäjä voi kirjautua ulos järjestelmästä
 
