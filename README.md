@@ -1,6 +1,8 @@
 # Ohjelmointitekniikka kevät 2020, harjoitustyö
 
-## Projekti
+## Projekti, Vuoronvaihtosovellus
+
+[Käyttöohje](dokumentointi/kayttoohje.md)
 
 [Vaatimusmäärittely](dokumentointi/vaatimusmaarittely.md)
 
