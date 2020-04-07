@@ -1,1 +1,1 @@
---- tyhjä ---
+![pakkauskaavio](pakkauskaavio.png)

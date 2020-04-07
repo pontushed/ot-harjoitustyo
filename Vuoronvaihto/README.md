@@ -2,6 +2,6 @@
 
 ### Kääntäminen
 
-> mvn compile exec:java -Dexec.mainClass=vuoronvaihto.Main
+> mvn -q spring-boot:run
 
-Testattu toimivaksi melkillä 30.3.2020.
+Testattu toimivaksi melkillä 6.4.2020.
