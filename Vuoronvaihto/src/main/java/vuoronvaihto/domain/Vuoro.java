@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package vuoronvaihto.logiikka;
+package vuoronvaihto.domain;
 
 /**
  *
@@ -12,11 +12,25 @@ package vuoronvaihto.logiikka;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import javax.persistence.Entity;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
-public class Vuoro {
-    private final Vuorokoodi vuorokoodi;
-    private final LocalDate paiva;
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class Vuoro extends AbstractPersistable<Long> {
+    
+    @ManyToOne
+    private Vuorokoodi vuorokoodi;
+    private LocalDate paiva;
+    
+    @OneToOne
     private Kayttaja tekija;
 
     public Vuoro(Vuorokoodi vuorokoodi, String paiva, Kayttaja tekija) {
@@ -34,7 +48,7 @@ public class Vuoro {
     }
     
     public LocalDateTime getAloitusAika() {
-        return LocalDateTime.of(this.paiva,this.vuorokoodi.getAloitusAika());
+        return LocalDateTime.of(this.paiva, this.vuorokoodi.getAloitusAika());
     }
     
     public LocalDateTime getLopetusAika() {        
