@@ -1,4 +1,4 @@
-# Ohjelmointitekniikka kevät 2020, harjoitustyö
+# Ohjelmistotekniikka kevät 2020, harjoitustyö
 
 ## Projekti, Vuoronvaihtosovellus
 
