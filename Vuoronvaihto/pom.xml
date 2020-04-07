@@ -71,7 +71,7 @@
                 <version>0.8.3</version>
                 <configuration>
                     <excludes>
-                        <exclude>vuoronvaihto/VuoronvaihtoUI.java</exclude>
+                        <exclude>vuoronvaihto.ui/VuoronvaihtoUI.java</exclude>
                     </excludes>
                 </configuration>
                 <executions>
