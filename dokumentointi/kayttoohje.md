@@ -2,8 +2,9 @@
 
 ### Kääntäminen
 
-> mvn compile exec:java -Dexec.mainClass=vuoronvaihto.Main
+> mvn -q spring-boot:run
 
-Testattu toimivaksi melkillä 30.3.2020
+Testattu toimivaksi melkillä 6.4.2020
 
-Sovelluksessa on vasta ohjelmoituna muutama luokka. Seuraavaksi teen DAO:n ja tietokantayhteyden, jonka jälkeen alan työstämään GUI:ta.
+Sovellus käyttää nyt Spring Bootia. DAO on toteutettu käyttäen JPA:ta.
+Testit käyttää Springin testejä.
