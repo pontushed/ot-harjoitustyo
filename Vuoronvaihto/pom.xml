@@ -95,7 +95,8 @@
                 <configuration>
                     <excludes>
                         <exclude>vuoronvaihto/ui/*</exclude>
-                        <exclude>vuoronvaihto/*</exclude>
+                        <exclude>vuoronvaihto/Main*</exclude>
+                        <exlude>vuoronvaihto/Vuoronvaihto*</exlude>
                     </excludes>
                 </configuration>
                 <executions>

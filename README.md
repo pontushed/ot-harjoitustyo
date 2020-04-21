@@ -33,19 +33,11 @@ mvn -q spring-boot:run
 
 Ensimmäistä kertaa ajettaessa tietokanta alustetaan esimerkkidatalla. Kirjaudu sisään käyttäjänimellä 'kayttaja1','kayttaja2','kayttaja3,'kayttaja4' tai 'kayttaja5'
 
-### Suorita testit
+### Suorita testit ja luo JaCoCo-testikattavuusraportti
 
 ```
 mvn test
 ```
-
-Luo Jacocon testikattavuusraportti
-
-```
-mvn test jacoco:report
-```
-
-**Huom! Törmäsin ongelmaan, Jacoco Report näyttää kattavuudeksi 0%, vaikka sen pitäisi olla 90-100%**
 
 Kattavuusraporttia voi tarkastella avaamalla selaimella tiedosto target/site/jacoco/index.html
 
