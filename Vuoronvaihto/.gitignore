@@ -3,3 +3,6 @@ database.mv.db
 nb-configuration.xml
 nbactions.xml
 database.trace.db
+.classpath
+.factorypath
+.DS_Store
