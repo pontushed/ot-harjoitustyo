@@ -7,24 +7,28 @@ päämääränä on tarjota käyttäjille helppo tapa yhdistää kysyntä ja tar
 
 ## Käyttäjät
 
-Alkuvaiheessa sovelluksella on ainoastaan yksi käyttäjärooli eli _normaali käyttäjä_. Myöhemmin sovellukseen saatetaan lisätä suuremmilla oikeuksilla varustettu _pääkäyttäjä_.
+Käyttäjät ovat määritelty valmiiksi sovellukseen CSV-tiedostona.
 
 ## Käyttöliittymäluonnos
 
-Sovellus aukeaa kirjautumisnäkymään, josta siirrytään onnistuneen kirjautumisen yhteydessä kirjaantuneen käyttäjän työvuorolistaan.
+**(Tehty)** Sovellus aukeaa kirjautumisnäkymään, josta siirrytään onnistuneen kirjautumisen yhteydessä kirjaantuneen käyttäjän työvuorolistaan.
 
-Työvuorolistassa voi ottaa yhden työvuoron muutostoiveen kohteeksi. Sovellus avaa näkymän, jossa haetaan vaihtokandidaatit. Käyttäjä voi tehdä muutostoiveen tässä näkymässä.
+**(Tehty)** Työvuorolistassa voi ottaa yhden työvuoron muutostoiveen kohteeksi. Sovellus listaa vuorot, jotka sopivat vaihdettaviksi.
+Käyttäjä voi tehdä muutostoiveen tässä näkymässä.
 
 ## Perusversion tarjoama toiminnallisuus
 
 ### Ennen kirjautumista
 
+**(Tehty)**
+
 - käyttäjä voi kirjautua järjestelmään
   - kirjautuminen onnistuu syötettäessä olemassaoleva käyttäjätunnus kirjautumislomakkeelle
-  - käyttäjätunnus on uniikki ja se vastaa työpaikan Office365-käyttäjätunnusta.
   - jos käyttäjää ei olemassa, ilmoittaa järjestelmä tästä
 
 ### Kirjautumisen jälkeen
+
+**(Tehty)**
 
 - käyttäjä näkee omat työvuoronsa
 
@@ -32,13 +36,13 @@ Työvuorolistassa voi ottaa yhden työvuoron muutostoiveen kohteeksi. Sovellus a
 
   - vuoronvaihtotoive näkyy potentiaalisille vaihtajille
 
-- käyttäjä näkee, ketkä ovat potentiaalisia vaihtajia
+- **(Tehty)** käyttäjä näkee, ketkä ovat potentiaalisia vaihtajia
 
 - käyttäjä näkee, onko hänelle tullut vuoronvaihtoehdotuksia. Sovellus huolehtii, että lepoaikamääräykset toteutuvat kaikissa tapauksissa.
 
 - hyväksyessään vuoronvaihtoehdotuksen, muuttuvat vuorot työvuorolistassa.
 
-- käyttäjä voi kirjautua ulos järjestelmästä
+- **(Tehty)** käyttäjä voi kirjautua ulos järjestelmästä
 
 ## Jatkokehitysideoita
 
