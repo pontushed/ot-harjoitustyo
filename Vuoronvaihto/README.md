@@ -2,6 +2,8 @@
 
 ## Projekti, Vuoronvaihtosovellus
 
+[1. Release](https://github.com/pontushed/ot-harjoitustyo/releases/tag/viikko5)
+
 [Käyttöohje](dokumentointi/kayttoohje.md)
 
 [Vaatimusmäärittely](dokumentointi/vaatimusmaarittely.md)
