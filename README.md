@@ -45,6 +45,8 @@ Luo Jacocon testikattavuusraportti
 mvn test jacoco:report
 ```
 
+**Huom! Törmäsin ongelmaan, Jacoco Report näyttää kattavuudeksi 0%, vaikka sen pitäisi olla 90-100%**
+
 Kattavuusraporttia voi tarkastella avaamalla selaimella tiedosto target/site/jacoco/index.html
 
 ### Suorita Checkstyle-testi
