@@ -1,2 +1,5 @@
 target
 database.mv.db
+nb-configuration.xml
+nbactions.xml
+database.trace.db

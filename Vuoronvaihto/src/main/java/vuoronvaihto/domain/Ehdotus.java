@@ -6,15 +6,21 @@
 package vuoronvaihto.domain;
 
 /**
- *
+ * Ehdotus-olion toteuttava luokka.
  * @author pontus
  */
 public class Ehdotus {
-    private Vuoro vuoro;
-    private Kayttaja tekija;
-    private Kayttaja uusiTekija;
+    private Shift vuoro;
+    private UserObject tekija;
+    private UserObject uusiTekija;
 
-    public Ehdotus(Vuoro vuoro, Kayttaja tekija, Kayttaja uusiTekija) {
+    /**
+     * Konstruktori. tekijä ehdottaa vuoroa vuoro tekijälle uusiTekijä. 
+     * @param vuoro Mitä vuoroa ehdotus koskee
+     * @param tekija Alkuperäinen tekijä
+     * @param uusiTekija Ehdotuksen saava tekijä
+     */
+    public Ehdotus(Shift vuoro, UserObject tekija, UserObject uusiTekija) {
         this.vuoro = vuoro;
         this.tekija = tekija;
         this.uusiTekija = uusiTekija;

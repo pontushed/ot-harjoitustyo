@@ -4,17 +4,17 @@
  * and open the template in the editor.
  */
 package vuoronvaihto;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
- *
- * @author pontus
+ * Yritän saada tässä mvn package "could not find main class"-virhettä pois.
  */
-@SpringBootApplication
 public class Main {
+    
+    /**
+     * Ohjelman pääasiallinen entrypoint.
+     * @param args Argumentit 
+     */
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
-        //VuoronvaihtoUI.main(args);
+        Vuoronvaihto.main(args);
     }
 }
