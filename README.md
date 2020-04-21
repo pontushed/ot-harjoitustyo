@@ -19,6 +19,10 @@ Sovelluksessa on vasta ohjelmoituna muutama luokka ja kaksi testiä. Seuraavaksi
 Sovellus on nyt muokattu Spring Boot-sovellukseksi. Käytän JPA:ta tietokantatoimintoihin.
 CheckStyle otettu käyttöön.
 
+**_21.4.2020_**
+
+GUI:n tekeminen on edistynyt. Käytän siinä FxWeaver-kirjastoa, jolla saa JavaFX:n sovitettua yhteen Spring Bootin kanssa, jotta pääsen hyödyntämään Spring Bootin JPA-tietokantaominaisuuksia.
+
 ## Komentorivikomennot
 
 ### Aja ohjelma
@@ -26,6 +30,8 @@ CheckStyle otettu käyttöön.
 ```
 mvn -q spring-boot:run
 ```
+
+Ensimmäistä kertaa ajettaessa tietokanta alustetaan esimerkkidatalla. Kirjaudu sisään käyttäjänimellä 'kayttaja1','kayttaja2','kayttaja3,'kayttaja4' tai 'kayttaja5'
 
 ### Suorita testit
 

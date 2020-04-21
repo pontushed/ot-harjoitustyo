@@ -10,8 +10,6 @@ import java.util.List;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -22,7 +20,6 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
@@ -76,10 +73,11 @@ public class ShiftViewController {
     public void initialize() {
         this.stage = new Stage();
         stage.setScene(new Scene(dialog));
-        String handle = daoService.getCurrentUser().getHandle();
+        UserObject worker = daoService.getCurrentUser();
+        String handle = worker.getHandle();
         stage.setTitle("Vuoronvaihtosovellus [" + handle + "]");
         ObservableList<Shift> data = tableView.getItems();
-        UserObject worker = workerRepository.findByHandle(handle).get(0);
+
         if (worker != null) {
             List<Shift> shifts = shiftRepository.findByWorker(worker);
             for (Shift s : shifts) {
