@@ -8,3 +8,4 @@ database.trace.db
 .DS_Store
 nbproject/
 .settings/
+.project
