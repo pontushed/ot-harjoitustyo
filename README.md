@@ -36,7 +36,7 @@ mvn test
 Luo Jacocon testikattavuusraportti
 
 ```
-mvn jacoco:report
+mvn test jacoco:report
 ```
 
 Kattavuusraporttia voi tarkastella avaamalla selaimella tiedosto target/site/jacoco/index.html
