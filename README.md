@@ -74,3 +74,9 @@ mvn package
 Suoritettava .jar-tiedosto löytyy hakemistosta
 
 > /target/Vuoronvaihto-1.0-SNAPSHOT.jar
+
+Suoritus:
+
+```
+java -jar target/Vuoronvaihto-1.0-SNAPSHOT.jar
+```
