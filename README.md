@@ -68,3 +68,7 @@ JavaDocia voi tarkastella avaamalla selaimella tiedosto target/site/apidocs/inde
 ```
 mvn package
 ```
+
+Suoritettava .jar-tiedosto löytyy hakemistosta
+
+> /target/Vuoronvaihto-1.0-SNAPSHOT.jar
