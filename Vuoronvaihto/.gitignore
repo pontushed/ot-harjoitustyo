@@ -6,3 +6,5 @@ database.trace.db
 .classpath
 .factorypath
 .DS_Store
+nbproject
+.settings
