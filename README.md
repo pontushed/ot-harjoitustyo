@@ -3,6 +3,7 @@
 ## Projekti, Vuoronvaihtosovellus
 
 [1. Release](https://github.com/pontushed/ot-harjoitustyo/releases/tag/viikko5)
+
 [2. Release](https://github.com/pontushed/ot-harjoitustyo/releases/tag/viikko6)
 
 [Käyttöohje](dokumentointi/kayttoohje.md)
