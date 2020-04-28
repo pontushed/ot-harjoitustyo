@@ -13,6 +13,8 @@ package vuoronvaihto.domain;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
@@ -26,13 +28,17 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Data
 public class Shift extends AbstractPersistable<Long> {
     
+    @Id
+    @GeneratedValue
+    private Long id;
+    
     @ManyToOne
     private Shiftcode shiftCode;
     private LocalDate dateOfShift;
     
     @OneToOne
     private UserObject worker;
-
+        
     /**
      * Konstruktori.
      * @param shiftCode vuoron koodi, sisältää alkamisajan ja keston.
@@ -68,5 +74,5 @@ public class Shift extends AbstractPersistable<Long> {
                 && (v.getWorker().equals(this.worker))
                 && (v.shiftCode.equals(this.shiftCode));
     }
-                
+              
 }

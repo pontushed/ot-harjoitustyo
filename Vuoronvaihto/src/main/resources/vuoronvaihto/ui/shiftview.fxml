@@ -50,6 +50,7 @@
                </HBox.margin>
             </Button>
             <Button fx:id="quitButton" accessibleHelp="Kirjaudu ulos" alignment="CENTER_RIGHT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#handleQuitButtonAction" text="Lopeta" />
+            <!--<Button fx:id="clearButton" onAction="#handleClearProposalsButtonAction" text="Tyhjennä ehdotukset" />-->
          </children>
       </HBox>
       <Separator prefWidth="200.0" />

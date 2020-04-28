@@ -3,6 +3,7 @@
 ## Projekti, Vuoronvaihtosovellus
 
 [1. Release](https://github.com/pontushed/ot-harjoitustyo/releases/tag/viikko5)
+[2. Release](https://github.com/pontushed/ot-harjoitustyo/releases/tag/viikko6)
 
 [Käyttöohje](dokumentointi/kayttoohje.md)
 
@@ -24,6 +25,10 @@ CheckStyle otettu käyttöön.
 **_21.4.2020_**
 
 GUI:n tekeminen on edistynyt. Käytän siinä FxWeaver-kirjastoa, jolla saa JavaFX:n sovitettua yhteen Spring Bootin kanssa, jotta pääsen hyödyntämään Spring Bootin JPA-tietokantaominaisuuksia.
+
+**_28.4.2020_**
+
+Jatkoin GUI:n tekemistä ja toiminnallisuuden laajentamista. Vuoronvaihtoehdotuksia voi nyt tehdä tietokantaan, mutta ne eivät vielä näy toiselle käyttäjälle.
 
 ## Komentorivikomennot
 

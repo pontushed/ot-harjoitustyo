@@ -6,13 +6,11 @@
 package vuoronvaihto.service;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import vuoronvaihto.domain.*;
 import vuoronvaihto.dao.*;
 
@@ -31,6 +29,9 @@ public class DaoService {
     
     @Autowired
     private ShiftRepository shiftRepository;
+    
+    @Autowired
+    private ProposalRepository proposalRepository;
     
     private UserObject u;
     
@@ -105,8 +106,6 @@ public class DaoService {
         List<Shift> approvedShifts = new ArrayList<>();
         Shift prevShift = shiftRepository.findFirstByDateOfShiftBeforeAndWorkerOrderByDateOfShiftDesc(shiftDate, worker);
         Shift nextShift = shiftRepository.findFirstByDateOfShiftAfterAndWorkerOrderByDateOfShiftAsc(shiftDate, worker);
-        System.out.println(prevShift);
-        System.out.println(nextShift);
         shiftRepository.findByDateOfShiftAndWorkerNot(shiftDate, worker)
                 .stream()
                 .filter((shift) -> (Contract.checkRestTimeBeforeAndAfter(prevShift, shift, nextShift)))
@@ -115,4 +114,46 @@ public class DaoService {
                 });        
         return approvedShifts;
     }            
+
+    /**
+     * Add a new proposal.
+     * @param origS Original shift
+     * @param newS New shift
+     */
+    public void addProposal(Shift origS, Shift newS) {
+        Proposal pOut = new Proposal(origS, newS.getWorker());
+        Proposal pIn = new Proposal(newS, origS.getWorker());
+        proposalRepository.save(pOut);
+        proposalRepository.save(pIn);        
+    }
+
+    /**
+     * Get proposals for a certain shift.
+     * @param s Shift
+     * @return List of Proposal objects
+     */
+    public List<Proposal> getProposals(Shift s) {
+        return proposalRepository.findByShift(s);
+    }
+    
+    /**
+     * Get proposals for the replacing worker. Use this to find if there are proposals
+     * for a certain shift.
+     * @param u Worker concerned
+     * @param s Shift of worker concerned
+     * @return List of Proposal objects
+     */
+    public List<Proposal> getProposalsIn(UserObject u, Shift s) {
+        return proposalRepository.findByReplacingWorkerAndShift(u, s);
+    }
+    
+    /**
+     * Delete proposals for a certain shift and user.
+     * @param s Shift
+     * @param u Worker
+     */
+    @Transactional
+    public void deleteProposal(Shift s, UserObject u) {        
+        proposalRepository.deleteByShiftAndReplacingWorker(s, u);
+    }
 }

@@ -19,7 +19,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
     
     /**
      * Spring JPA-automatisoitu tietokantahaku.
-     * SQL: SELECT shift FROM ShiftRepository WHERE worker=u
+     * SQL: SELECT * FROM ShiftRepository WHERE worker=u
      * @param u Käyttäjä
      * @return Lista vuoroista
      */
@@ -27,7 +27,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
     
     /**
      * Spring JPA-automatisoitu tietokantahaku.
-     * SQL: SELECT shift FROM ShiftRepository WHERE worker=u AND dateOfShift BETWEEN a,b
+     * SQL: SELECT * FROM ShiftRepository WHERE worker=u AND dateOfShift BETWEEN a,b
      * @param u Käyttäjä
      * @param a Alkupäivämäärä, esim "2020-05-01"
      * @param b Loppupäivämäärä, esim "2020-05-05"
@@ -37,7 +37,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
     
     /**
      * Spring JPA-automatisoitu tietokantahaku.
-     * SQL: SELECT shift FROM ShiftRepository WHERE dateOfShift=d AND worker=u
+     * SQL: SELECT * FROM ShiftRepository WHERE dateOfShift=d AND worker=u
      * @param d Päivämäärä, esim. "2020-05-01". Huom. Tyyppi LocalDate
      * @param u Käyttäjä
      * @return Lista vuoroista
@@ -46,7 +46,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
 
     /**
      * Spring JPA-automatisoitu tietokantahaku.
-     * SQL: SELECT shift FROM ShiftRepository
+     * SQL: SELECT * FROM ShiftRepository
      *      WHERE dateOfShift BEFORE shiftDate AND worker=u
      *      ORDERBY dateOfShift DESC LIMIT 1
      * @param shiftDate Päivämäärä, esim. "2020-05-01" Huom. Tyyppi LocalDate
@@ -57,7 +57,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
 
     /**
      * Spring JPA-automatisoitu tietokantahaku.
-     * SQL: SELECT shift FROM ShiftRepository
+     * SQL: SELECT * FROM ShiftRepository
      *      WHERE dateOfShift AFTER shiftDate AND worker=u
      *      ORDERBY dateOfShift DESC LIMIT 1
      * @param shiftDate Päivämäärä, esim "2020-05-01" Huom. Tyyppi LocalDate

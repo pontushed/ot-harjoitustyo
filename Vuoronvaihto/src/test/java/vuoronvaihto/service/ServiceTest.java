@@ -6,6 +6,7 @@
 package vuoronvaihto.service;
 
 import java.io.File;
+import java.util.List;
 import java.util.Scanner;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -40,13 +41,13 @@ import vuoronvaihto.dao.ShiftCodeRepository;
 public class ServiceTest {
     
     @Autowired
-    private UserObjectRepository kayttajaRepository;
+    private UserObjectRepository userRepository;
     
     @Autowired
-    private ShiftCodeRepository vuorokoodiRepository;
+    private ShiftCodeRepository shiftcodeRepository;
     
     @Autowired
-    private ShiftRepository vuoroRepository;
+    private ShiftRepository shiftRepository;
     
     @Autowired
     private DaoService daoService;
@@ -67,6 +68,7 @@ public class ServiceTest {
     
     @Before
     public void setUp() {
+        mockService.initializeDatabase();
     }
     
     @After
@@ -78,8 +80,8 @@ public class ServiceTest {
         UserObject k = daoService.getOrCreateUser("ansponhed");
         Shiftcode koodi_AA1400 = daoService.getOrCreateShiftcode(new Shiftcode("AA1400","14:00",7));
         Shiftcode koodi_AA0545 = daoService.getOrCreateShiftcode(new Shiftcode("AA0545","05:45",7));
-        Shift vuoro = vuoroRepository.save(new Shift(koodi_AA1400,"2020-03-30",k));
-        Shift vuoroB = vuoroRepository.save(new Shift(koodi_AA0545,"2020-03-31",k));
+        Shift vuoro = shiftRepository.save(new Shift(koodi_AA1400,"2020-03-30",k));
+        Shift vuoroB = shiftRepository.save(new Shift(koodi_AA0545,"2020-03-31",k));
         assertEquals(true,Contract.checkRestTime(vuoro, vuoroB));
     }
     
@@ -88,15 +90,14 @@ public class ServiceTest {
         UserObject k = daoService.getOrCreateUser("ansponhed");
         Shiftcode koodi_AA1800 = daoService.getOrCreateShiftcode(new Shiftcode("AA1800","18:00",7));
         Shiftcode koodi_AA0545 = daoService.getOrCreateShiftcode(new Shiftcode("AA0545","05:45",7));
-        Shift vuoroA = vuoroRepository.save(new Shift(koodi_AA1800,"2020-03-30",k));
-        Shift vuoroB = vuoroRepository.save(new Shift(koodi_AA0545,"2020-03-31",k));
+        Shift vuoroA = shiftRepository.save(new Shift(koodi_AA1800,"2020-03-30",k));
+        Shift vuoroB = shiftRepository.save(new Shift(koodi_AA0545,"2020-03-31",k));
         assertEquals(false,Contract.checkRestTime(vuoroA, vuoroB));
     }
     
     
     @Test
     public void laskeKayttajat() {
-        mockService.initializeDatabase();
         long c = 0;
         try (Scanner tiedostonLukija = new Scanner(new File("data/kayttajat.csv"))) {
             while (tiedostonLukija.hasNextLine()) {                
@@ -106,13 +107,12 @@ public class ServiceTest {
         } catch (Exception e) {
             System.out.println("Virhe: " + e.getMessage());
         }
-        long count = kayttajaRepository.count();
+        long count = userRepository.count();
         assertEquals(true,(c == count));
     }
     
     @Test
     public void laskeVuorokoodit() {
-        mockService.initializeDatabase();
         long c = 0;
         try (Scanner tiedostonLukija = new Scanner(new File("data/vuorokoodit.csv"))) {
             while (tiedostonLukija.hasNextLine()) {                
@@ -122,13 +122,12 @@ public class ServiceTest {
         } catch (Exception e) {
             System.out.println("Virhe: " + e.getMessage());
         }
-        long count = vuorokoodiRepository.count();
+        long count = shiftcodeRepository.count();
         assertEquals(true,(c == count));
     }
     
     @Test
     public void laskeVuorot() {
-        mockService.initializeDatabase();
         long c = 0;
         try (Scanner tiedostonLukija = new Scanner(new File("data/vuorot.csv"))) {
             while (tiedostonLukija.hasNextLine()) {                
@@ -138,7 +137,7 @@ public class ServiceTest {
         } catch (Exception e) {
             System.out.println("Virhe: " + e.getMessage());
         }
-        long count = vuoroRepository.count();
+        long count = shiftRepository.count();
         assertEquals(true,(c == count));
     }
     
@@ -152,6 +151,27 @@ public class ServiceTest {
         mockService.naytaKayttajat();
         mockService.naytaVuorokoodit();
         assertFalse(false);
+    }
+    
+    @Test
+    public void loginTest() {
+        daoService.getOrCreateUser("test");
+        assertTrue(daoService.login("test"));        
+    }
+    
+    @Test
+    public void logoutTest() {
+        daoService.login("kayttaja1");
+        daoService.logout();
+        assertTrue(daoService.getCurrentUser() == null);
+    }
+    
+    @Test
+    public void testApplicableShifts() {
+        UserObject u = userRepository.findByHandle("kayttaja1").get(0);
+        Shift s = shiftRepository.findByWorker(u).get(1);
+        List<Shift> l = daoService.getApplicableShifts(s);
+        assertTrue(l.size() != 0);
     }
     
     

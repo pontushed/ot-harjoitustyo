@@ -12,28 +12,14 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.runner.*;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringRunner;
 
 /**
- *
+ * Silly name for this test class, because NetBeans didn't like the name 'DomainTest'
  * @author pontus
  */
-@RunWith(SpringRunner.class)
-@ActiveProfiles("test")
-@DataJpaTest
-@AutoConfigureTestDatabase(replace=Replace.NONE)
-@ComponentScan("vuoronvaihto.service")
-public class DomainTest {
-        
-    public DomainTest() {
-    }
-    
+
+public class DomainiTest {
+            
     @BeforeClass
     public static void setUpClass() {
     }
@@ -156,6 +142,5 @@ public class DomainTest {
     public void tarkistaTESViikkoLepo3() {
         ArrayList<Shift> vuorot = new ArrayList<>();
         assertEquals(true,Contract.checkWeeklyRestTime(vuorot));
-    }
-        
+    }        
 }
