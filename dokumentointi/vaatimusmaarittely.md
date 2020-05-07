@@ -38,11 +38,9 @@ Käyttäjä voi tehdä muutostoiveen tässä näkymässä.
 
 ### Kirjautumisen jälkeen
 
-**(Tehty)**
+- **(Tehty)** käyttäjä näkee omat työvuoronsa
 
-- käyttäjä näkee omat työvuoronsa
-
-- käyttäjä voi luoda uuden vuoronvaihtotoiveen
+- **(Tehty)** käyttäjä voi luoda uuden vuoronvaihtotoiveen
 
   - vuoronvaihtotoive näkyy potentiaalisille vaihtajille
 
