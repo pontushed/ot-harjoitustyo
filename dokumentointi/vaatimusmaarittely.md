@@ -2,7 +2,17 @@
 
 ## Sovelluksen tarkoitus
 
-Sovelluksen avulla käyttäjät voivat ehdottaa vaihtoja työvuorolistaan sekä tarkistaa työvuoronsa. Sovellus huolehtii siitä, että sekä TESin että työaikalainsäädännön mukaisia lepoaikasäännöksiä noudatetaan. Sovelluksen
+Sovelluksen avulla käyttäjät voivat ehdottaa vaihtoja työvuorolistaan sekä tarkistaa työvuoronsa. Sovellus huolehtii siitä, että sekä kuvitteellisen TESin että työaikalainsäädännön mukaisia lepoaikasäännöksiä noudatetaan.
+
+Sovellus tarkastaa vuoronvaihtoa suunnitellessa seuraavat pykälät:
+
+**§1 Viikkolepo**
+Vapaa-aika on yhtäjaksoisesti vähintään 24 tuntia kalenteriviikossa.
+
+**§2 Lepoaika vuorojen välissä (Vuorokausilepo)**
+Vuorokausilevon on oltava vähintään 7 tuntia työvuorojen välillä.
+
+Sovelluksen
 päämääränä on tarjota käyttäjille helppo tapa yhdistää kysyntä ja tarjonta vuoronvaihtojen toteutumiseksi.
 
 ## Käyttäjät
@@ -51,3 +61,5 @@ Perusversion jälkeen järjestelmää täydennetään ajan salliessa esim. seura
 - käyttäjien yhteyteen salasana, joka vaaditaan kirjautuessa
 - sairastumisen merkintä
 - ilmoitukset käyttäjille
+- käyttäjien hallinta
+- työvuorolistojen tuonti

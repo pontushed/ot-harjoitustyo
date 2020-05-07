@@ -37,20 +37,25 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
     
     /**
      * Spring JPA-automatisoitu tietokantahaku.
-     * SQL: SELECT * FROM ProposalRepository WHERE replacingWorker=u AND shift=s
+     * SQL: SELECT * FROM ProposalRepository WHERE replacingWorker=u AND shift=s LIMIT 1
      * @param u Uusi työntekijä
      * @param s Vuoro
      * @return Lista vuoronvaihtoehdotuksista
      */
-    public List<Proposal> findByReplacingWorkerAndShift(UserObject u, Shift s);
+    public Proposal findOneByReplacingWorkerAndShift(UserObject u, Shift s);
             
     /**
      * Spring JPA-automatisoitu tietokantakomento.
      * SQL: DELETE FROM ProposalRepository WHERE shift=s AND replacingWorker = u
      * @param s Vuoro
      * @param u Nykyinen työntekijä
-     */
-  
+     */  
     public void deleteByShiftAndReplacingWorker(Shift s, UserObject u);
     
+    /**
+     * Spring JPA-automated database method.
+     * SQL: DELETE FROM Proposal WHERE shift=s
+     * @param s Shift      
+     */
+    public void deleteByShift(Shift s);
 }

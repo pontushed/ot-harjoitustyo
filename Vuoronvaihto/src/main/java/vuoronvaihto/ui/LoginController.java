@@ -62,7 +62,9 @@ public class LoginController {
     public void show() {
         daoService.logout();
         this.stage = new Stage();
-        stage.setScene(new Scene(dialog));
+        Scene scene = new Scene(dialog);
+        scene.getStylesheets().add(getClass().getResource("/styles/login.css").toExternalForm());        
+        stage.setScene(scene);
         stage.setTitle("Vuoronvaihtosovellus");
         stage.show();
     }

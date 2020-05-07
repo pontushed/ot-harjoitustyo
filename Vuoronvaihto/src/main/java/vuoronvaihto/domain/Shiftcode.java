@@ -74,6 +74,9 @@ public class Shiftcode extends AbstractPersistable<Long> {
     
     @Override
     public String toString() {
+        if (code.equals("Vapaa")) { 
+            return "Vapaa"; 
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         String s = "[" + code + " (" +
                 startTime.format(formatter) + "-" + 

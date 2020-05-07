@@ -5,6 +5,9 @@
  */
 package vuoronvaihto.ui;
 
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -41,9 +44,6 @@ public class ShiftViewController {
     private Stage stage;
     
     @Autowired
-    private ShiftRepository shiftRepository;
-    
-    @Autowired
     private ProposalRepository proposalRepository;
         
     @Autowired
@@ -66,28 +66,23 @@ public class ShiftViewController {
     
     private Shift selectedShift;
     
+    private LocalDate startDate, endDate;
+    
     public ShiftViewController(FxWeaver fxWeaver) {
         this.fxWeaver = fxWeaver;
+        this.startDate = LocalDate.now();
+        this.endDate = this.startDate.plusDays(7);
     }
     
     @FXML
     public void initialize() {
         this.stage = new Stage();
-        stage.setScene(new Scene(dialog));
-        UserObject worker = daoService.getCurrentUser();
-        String handle = worker.getHandle();
-        stage.setTitle("Vuoronvaihtosovellus [" + handle + "]");
-        ObservableList<Shift> data = tableView.getItems();
-
-        if (worker != null) {
-            List<Shift> shifts = shiftRepository.findByWorker(worker);
-            for (Shift s : shifts) {
-                data.add(s);
-            }   
-        }
-        tableView.setPlaceholder(new Label("Vuoroja ei ole."));
-        tableView.setItems(data);
+        Scene scene = new Scene(dialog);
+        scene.getStylesheets().add("styles/stylesheet.css");
+        stage.setScene(scene);        
+        stage.setTitle("Vuoronvaihtosovellus [" + daoService.getCurrentUser().getHandle() + "]");
         
+        generateSchedule();
         tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
         
         // Handler for selecting a row
@@ -95,11 +90,15 @@ public class ShiftViewController {
 
         selectedItems.addListener(new ListChangeListener<Shift>() {
           @Override
-          public void onChanged(Change<? extends Shift> change) {
-            //System.out.println("Selection changed: " + change.getList());
-            selectedShift = change.getList().get(0);
-            statusText.setText(selectedShift.toString());
-            changeButton.setDisable(false);
+          public void onChanged(Change<? extends Shift> change) {            
+            if (change.getList().size() == 0) {
+                selectedShift = null;
+                changeButton.setDisable(true);
+            } else {
+                selectedShift = change.getList().get(0);
+                statusText.setText(selectedShift.toString());
+                changeButton.setDisable(false);
+            }            
             aside.getChildren().clear();
           }
         });
@@ -110,26 +109,63 @@ public class ShiftViewController {
         stage.show();
     }
     
+    public void generateSchedule() {
+        UserObject worker = daoService.getCurrentUser();
+        ObservableList<Shift> data = tableView.getItems();
+        data.clear();
+        if (worker != null) {
+            LocalDate d = startDate;
+            HashMap<LocalDate,Shift> schedule = new HashMap<>();
+            List<Shift> shifts = daoService.getSchedule(startDate, endDate, worker);
+            for (Shift s : shifts) {
+                schedule.put(s.getDateOfShift(),s);
+            }
+            while(d.isBefore(endDate)) {               
+               if (schedule.containsKey(d)) {
+                   data.add(schedule.get(d));
+               } else {
+                   data.add(new Shift(new Shiftcode("Vapaa", "12:00", 0), d.toString(), worker));
+               }
+               d = d.plusDays(1);
+            }
+        }
+        tableView.setPlaceholder(new Label("Vuoroja ei ole."));
+        tableView.setItems(data);
+    }
+    
     @FXML
-    private void handlePrevButtonAction(ActionEvent event) {
-        System.out.println("Prev button clicked");
+    private void handlePrevButtonAction(ActionEvent event) {        
+        startDate = startDate.minusDays(3);
+        endDate = endDate.minusDays(3);
+        statusText.setText("Date range: " + startDate.toString() + ":" + endDate.toString());
+        generateSchedule();
     }
     
     @FXML
     private void handleNextButtonAction(ActionEvent event) {
-        System.out.println("Next button clicked");
+        startDate = startDate.plusDays(3);
+        endDate = endDate.plusDays(3);
+        statusText.setText("Date range: " + startDate.toString() + ":" + endDate.toString());
+        generateSchedule();
     }
     
     @FXML
-    private void handleChangeButtonAction(ActionEvent event) {        
-        asideList();
+    private void handleChangeButtonAction(ActionEvent event) {
+        if (selectedShift.getShiftCode().toString().equals("Vapaa")) {
+            System.out.println("Vapaapäivän vuoro, tee jotain muuta");
+        } else {
+            asideList();            
+        }
     }
     
     /**
      * Show the list of applicable shift change opportunities.
      */
     private void asideList() {
-        List<Shift> applicableShifts = daoService.getApplicableShifts(selectedShift);        
+        List<Shift> applicableShifts = daoService.getApplicableShifts(selectedShift);
+        List<Proposal> proposals = daoService.getProposals(selectedShift);
+        HashSet<UserObject> proposalSet = new HashSet();
+        proposals.forEach(p -> proposalSet.add(p.getReplacingWorker()));
         aside.getChildren().clear();
         if (applicableShifts.isEmpty()) {
             aside.getChildren().add(new Label("Ei vaihtoehtoisia vuoroja."));
@@ -138,20 +174,16 @@ public class ShiftViewController {
             VBox shiftList = new VBox();
             aside.getChildren().add(shiftList);
             for (Shift s : applicableShifts) {
-                showApplicableShift(shiftList, s);
+                int proposed = 0;                
+                Proposal p = daoService.getProposalIn(daoService.getCurrentUser(), s);
+                if (p != null) {
+                    proposed = -1;
+                } else if (proposalSet.contains(s.getWorker())) {
+                    proposed = 1;
+                }
+                addApplicableShift(shiftList, s, proposed);                
             }                        
-        }
-        
-        List<Proposal> proposals = daoService.getProposals(selectedShift);
-        if (!proposals.isEmpty()) {
-            aside.getChildren().add(new Label("Vuoronvaihtoehdotuksesi:"));
-            VBox vbox = new VBox();
-            aside.getChildren().add(vbox);
-            for (Proposal p : proposals) {
-                vbox.getChildren().add(new Label(p.toString()));
-            }            
-        }
-        
+        }                
     }
     
     /**
@@ -161,7 +193,7 @@ public class ShiftViewController {
         Alert a = new Alert(AlertType.INFORMATION);
         a.setTitle("Ilmoitus");
         a.setHeaderText("Onnistuminen");
-        a.setContentText("Ehdotukset käsiteltiin onnistuneesti.");
+        a.setContentText("Vuoro vaihdettiin onnistuneesti.");
         a.setOnCloseRequest(eh -> {
             aside.getChildren().clear();
         });
@@ -217,23 +249,41 @@ public class ShiftViewController {
      * @param v The VBox where the HBox will be added
      * @param s Shift
      */
-    private void showApplicableShift(VBox v, Shift s) {
+    private void addApplicableShift(VBox v, Shift s, int proposed) {
         HBox hbox = new HBox();
-        Button proposeButton = new Button("Pyydä");        
+        Button proposeButton = new Button();
+        switch (proposed) {
+            case -1:
+                proposeButton.setText("Hyväksy");
+                break;
+            case 1:
+                proposeButton.setText("Peru");
+                break;
+            default:
+                proposeButton.setText("Pyydä");
+                break;
+        }
         String shiftText = s.getWorker().toString() + ":" + s.getShiftCode();
         Label l = new Label(shiftText);
         hbox.getChildren().addAll(proposeButton,l);
         v.getChildren().add(hbox);
         
         proposeButton.setOnAction((ActionEvent e) -> {
-            if (proposeButton.getText().equals("Peru pyyntö")) {
-                daoService.deleteProposal(s, daoService.getCurrentUser());
-                daoService.deleteProposal(selectedShift, s.getWorker());
-                proposeButton.setText("Pyydä");
-            } else {
-                daoService.addProposal(selectedShift, s);
-                proposeButton.setText("Peru pyyntö");
-            }            
+            switch (proposeButton.getText()) {
+                case "Hyväksy":                    
+                    daoService.swap(s, selectedShift);
+                    proposalSuccess();
+                    generateSchedule();                    
+                    break;
+                case "Peru pyyntö":                    
+                    daoService.deleteProposal(selectedShift, s.getWorker());
+                    proposeButton.setText("Pyydä");
+                    break;
+                default:
+                    daoService.addProposal(selectedShift, s);
+                    proposeButton.setText("Peru pyyntö");
+                    break;
+            }
         });
     }
 }

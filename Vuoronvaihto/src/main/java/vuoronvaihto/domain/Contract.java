@@ -22,6 +22,10 @@ public class Contract {
      * @return True, jos lepoaika toteutuu.
      */
     public static boolean checkRestTime(Shift a, Shift b) {
+        if (a.getShiftCode().getCode().equals("Vapaa") ||
+            b.getShiftCode().getCode().equals("Vapaa")) {
+            return true;
+        }
         Duration duration = Duration.between(a.getFinishTime(), b.getStartTime());
         long diff = Math.abs(duration.toMinutes());
         if (diff < 7 * 60) {
@@ -39,14 +43,14 @@ public class Contract {
      * @return True, jos lepoaika toteutuu.
      */
     public static boolean checkRestTimeBeforeAndAfter(Shift a, Shift b, Shift c) {
-        if (a != null) {
+        if (a != null && a.getShiftCode().getCode() != "Vapaa") {
             Duration duration = Duration.between(a.getFinishTime(), b.getStartTime());
             long diff = Math.abs(duration.toMinutes());
             if (diff < 7 * 60) {
                 return false;
             }
         }
-        if (c != null) {
+        if (c != null && c.getShiftCode().getCode() != "Vapaa") {
             Duration duration = Duration.between(b.getFinishTime(), c.getStartTime());
             long diff = Math.abs(duration.toMinutes());
             if (diff < 7 * 60) {

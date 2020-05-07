@@ -8,6 +8,7 @@ package vuoronvaihto.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -91,6 +92,17 @@ public class DaoService {
         this.u = null;
     }
     
+    /** Get Shift schedule for a date range for a selected worker.
+     * @param startDate starting date
+     * @param endDate ending date
+     * @param w Worker
+     * @return List of dates and shifts. If there is no shift on a date, then there will a "free" shift
+     */
+    public List<Shift> getSchedule(LocalDate startDate, LocalDate endDate, UserObject w) {
+        List<Shift> shifts = shiftRepository.findByWorkerAndDateOfShiftBetween(w, startDate, endDate);        
+        return shifts;
+    }
+    
     /**
      * Get all applicable shifts, taking into consideration the contract constraints.
      * Constraints : endTime &lt;= next shift for current worker - restTime
@@ -104,15 +116,20 @@ public class DaoService {
         LocalDate shiftDate = s.getDateOfShift();
         UserObject worker = s.getWorker();
         List<Shift> approvedShifts = new ArrayList<>();
-        Shift prevShift = shiftRepository.findFirstByDateOfShiftBeforeAndWorkerOrderByDateOfShiftDesc(shiftDate, worker);
-        Shift nextShift = shiftRepository.findFirstByDateOfShiftAfterAndWorkerOrderByDateOfShiftAsc(shiftDate, worker);
+        Shift prevShift = shiftRepository.getPrevShift(shiftDate, worker);
+        Shift nextShift = shiftRepository.getNextShift(shiftDate, worker);        
         shiftRepository.findByDateOfShiftAndWorkerNot(shiftDate, worker)
                 .stream()
                 .filter((shift) -> (Contract.checkRestTimeBeforeAndAfter(prevShift, shift, nextShift)))
                 .forEachOrdered((shift) -> {
                     approvedShifts.add(shift);
-                });        
-        return approvedShifts;
+                });
+        return approvedShifts.stream().filter((shift) -> {
+            Shift prev = shiftRepository.getPrevShift(shiftDate, shift.getWorker());
+            Shift next = shiftRepository.getNextShift(shiftDate, shift.getWorker());
+            boolean reverseOK = Contract.checkRestTimeBeforeAndAfter(prev, s, next);                        
+            return reverseOK;
+        }).collect(Collectors.toList());
     }            
 
     /**
@@ -122,9 +139,7 @@ public class DaoService {
      */
     public void addProposal(Shift origS, Shift newS) {
         Proposal pOut = new Proposal(origS, newS.getWorker());
-        Proposal pIn = new Proposal(newS, origS.getWorker());
-        proposalRepository.save(pOut);
-        proposalRepository.save(pIn);        
+        proposalRepository.save(pOut);        
     }
 
     /**
@@ -143,8 +158,8 @@ public class DaoService {
      * @param s Shift of worker concerned
      * @return List of Proposal objects
      */
-    public List<Proposal> getProposalsIn(UserObject u, Shift s) {
-        return proposalRepository.findByReplacingWorkerAndShift(u, s);
+    public Proposal getProposalIn(UserObject u, Shift s) {
+        return proposalRepository.findOneByReplacingWorkerAndShift(u, s);
     }
     
     /**
@@ -155,5 +170,21 @@ public class DaoService {
     @Transactional
     public void deleteProposal(Shift s, UserObject u) {        
         proposalRepository.deleteByShiftAndReplacingWorker(s, u);
+    }
+
+    /**
+     * Swap shifts and delete all proposals concerning these shifts.
+     * @param a Shift A
+     * @param b Shift B
+     */
+    @Transactional
+    public void swap(Shift a, Shift b) {
+        proposalRepository.deleteByShift(a);
+        proposalRepository.deleteByShift(b);
+        UserObject tmp = a.getWorker();
+        a.setWorker(b.getWorker());
+        b.setWorker(tmp);
+        shiftRepository.save(a);
+        shiftRepository.save(b);        
     }
 }

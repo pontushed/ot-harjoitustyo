@@ -34,6 +34,7 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
     public void onApplicationEvent(StageReadyEvent event) {
         Stage stage = event.stage;
         Scene scene = new Scene(fxWeaver.loadView(LoginController.class), 300, 180);
+        scene.getStylesheets().add(getClass().getResource("/styles/login.css").toExternalForm());
         stage.setScene(scene);
         stage.setTitle("Vuoronvaihtosovellus");
         ts.initializeDatabase();

@@ -23,5 +23,5 @@
       <TextField fx:id="loginText" GridPane.rowIndex="1" />
       <Button fx:id="loginButton" mnemonicParsing="false" onAction="#loginButtonPressed" text="Aloita" GridPane.rowIndex="2" />
       <Label fx:id="loginMessage" text="" GridPane.rowIndex="3" />
-   </children>
+   </children>   
 </GridPane>

@@ -48,7 +48,7 @@ public class Proposal {
     
     @Override
     public String toString() {
-        return this.replacingWorker.getHandle();
+        return this.replacingWorker.getHandle() + ": " + this.shift.toString();
     }
                 
 }

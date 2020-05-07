@@ -19,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
@@ -33,10 +34,14 @@ public class Shift extends AbstractPersistable<Long> {
     private Long id;
     
     @ManyToOne
+    @Getter
     private Shiftcode shiftCode;
+    
+    @Getter
     private LocalDate dateOfShift;
     
     @OneToOne
+    @Getter
     private UserObject worker;
         
     /**
@@ -50,7 +55,7 @@ public class Shift extends AbstractPersistable<Long> {
         this.dateOfShift = LocalDate.parse(dateOfShift);
         this.worker = worker;
     }
-
+        
     public LocalDateTime getStartTime() {
         return LocalDateTime.of(this.dateOfShift, this.shiftCode.getStartTime());
     }
