@@ -12,10 +12,18 @@ package vuoronvaihto.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,6 +51,19 @@ public class Shift extends AbstractPersistable<Long> {
     @OneToOne
     @Getter
     private UserObject worker;
+    
+    @ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+        name="PROPOSAL",
+        joinColumns=
+            @JoinColumn(name="SHIFT_ID", referencedColumnName="ID"),
+        inverseJoinColumns=
+            @JoinColumn(name="REPLACING_SHIFT_ID", referencedColumnName="ID")
+    )
+    List<Shift> proposals;
+       
+    @ManyToMany(mappedBy="proposals", fetch=FetchType.EAGER, cascade = CascadeType.ALL)    
+    List<Shift> proposed;
         
     /**
      * Konstruktori.
@@ -54,6 +75,8 @@ public class Shift extends AbstractPersistable<Long> {
         this.shiftCode = shiftCode;
         this.dateOfShift = LocalDate.parse(dateOfShift);
         this.worker = worker;
+        this.proposals = new ArrayList<>();
+        this.proposed = new ArrayList<>();
     }
         
     public LocalDateTime getStartTime() {

@@ -7,16 +7,19 @@ package vuoronvaihto.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import vuoronvaihto.domain.*;
 import vuoronvaihto.dao.*;
 
 /**
- * Aputoiminnot tietokantatoimintoihin.
+ * Service class for DAO.
  * @author pontus
  */
 @Service
@@ -31,14 +34,14 @@ public class DaoService {
     @Autowired
     private ShiftRepository shiftRepository;
     
-    @Autowired
-    private ProposalRepository proposalRepository;
+//    @Autowired
+//    private ProposalRepository proposalRepository;
     
     private UserObject u;
     
     
     /**
-     * Hae käyttäjä. Luo uusi käyttäjä jos käyttäjää ei löydy.
+     * Get the UserObject from the database. Create a new row if the user is not found.
      * @param handle Käyttäjän tunnus.
      * @return UserObject Kayttaja-olio
      */
@@ -52,7 +55,7 @@ public class DaoService {
     }
     
     /**
-     * Hae vuorokoodi. Jos vuorokoodia ei löydy, luo uusi.
+     * Get the Shiftcode from the database. Create a new row if the shiftcode is not found.
      * @param v Shiftcode-olio
      * @return Shiftcode-olio
      */
@@ -137,9 +140,14 @@ public class DaoService {
      * @param origS Original shift
      * @param newS New shift
      */
+    @Transactional
     public void addProposal(Shift origS, Shift newS) {
-        Proposal pOut = new Proposal(origS, newS.getWorker());
-        proposalRepository.save(pOut);        
+        Shift s = shiftRepository.getOne(origS.getId());
+        List<Shift> props = s.getProposals();
+        if (!props.contains(newS)) {
+            props.add(newS);
+        }
+        shiftRepository.save(s);
     }
 
     /**
@@ -147,44 +155,70 @@ public class DaoService {
      * @param s Shift
      * @return List of Proposal objects
      */
-    public List<Proposal> getProposals(Shift s) {
-        return proposalRepository.findByShift(s);
+    @Transactional
+    public List<Shift> getProposals(Shift s) {
+        return s.getProposals();
     }
-    
-    /**
-     * Get proposals for the replacing worker. Use this to find if there are proposals
-     * for a certain shift.
-     * @param u Worker concerned
-     * @param s Shift of worker concerned
-     * @return List of Proposal objects
-     */
-    public Proposal getProposalIn(UserObject u, Shift s) {
-        return proposalRepository.findOneByReplacingWorkerAndShift(u, s);
-    }
-    
+            
     /**
      * Delete proposals for a certain shift and user.
      * @param s Shift
-     * @param u Worker
      */
     @Transactional
-    public void deleteProposal(Shift s, UserObject u) {        
-        proposalRepository.deleteByShiftAndReplacingWorker(s, u);
+    public void deleteProposal(Shift s, Shift r) {        
+        s.getProposals().remove(r);
+        shiftRepository.save(s);
     }
 
     /**
      * Swap shifts and delete all proposals concerning these shifts.
-     * @param a Shift A
-     * @param b Shift B
+     * @param a First shift
+     * @param b Second shift
      */
     @Transactional
     public void swap(Shift a, Shift b) {
-        proposalRepository.deleteByShift(a);
-        proposalRepository.deleteByShift(b);
         UserObject tmp = a.getWorker();
         a.setWorker(b.getWorker());
         b.setWorker(tmp);
+        a.getProposals().clear();
+        b.getProposals().clear();
         shiftRepository.save(a);
         shiftRepository.save(b);        
+    }
+    
+    /**
+     * Get a list of outbound proposals for a worker.
+     * @param u Worker
+     * @return List or null
+     */
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
+    public HashMap<Shift,List<Shift>> getOutboundProposals(UserObject u) {
+        List<Shift> shifts = shiftRepository.findByWorkerAndDateOfShiftAfter(u, LocalDate.now());
+        HashMap<Shift,List<Shift>> proposals = new HashMap<>();
+        shifts.forEach(s -> {
+            List<Shift> props = s.getProposals();
+            if (!props.isEmpty()) {
+                proposals.put(s,props);
+            }
+        });
+        return proposals;
+    }
+
+    /**
+     * Get a list of inbound proposals for a worker.
+     * @param u Worker
+     * @return List or null
+     */
+    @Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
+    public HashMap<Shift,List<Shift>> getInboundProposals(UserObject u) {
+        List<Shift> shifts = shiftRepository.findByWorkerAndDateOfShiftAfter(u, LocalDate.now());
+        HashMap<Shift,List<Shift>> proposals = new HashMap<>();
+        shifts.forEach(s -> {
+            List<Shift> props = s.getProposed();
+            if (!props.isEmpty()) {
+                proposals.put(s,props);
+            }
+        });
+        return proposals;
     }
 }

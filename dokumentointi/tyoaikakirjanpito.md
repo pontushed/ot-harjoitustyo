@@ -11,5 +11,6 @@
 |   20.4   |       8       | JavaFX & Spring Boot yhteensovittamista FxWeaverin avulla, lisää toiminnallisuutta |
 |   21.4   |       8       | Korjauksia Releasen tekoa varten                                                   |
 |   28.4   |       8       | Lisää toiminnallisuutta ja tappelua tietokantatoimintojen kanssa, lisää testejä    |
-|   7.5    |       7       | Vuoronvaihtologiikan parantamista                                                  |
-| **yht.** | _*69 tuntia*_ |
+|   7.5    |       9       | Vuoronvaihtologiikan parantamista                                                  |
+|   8.5    |       9       | Vuoronvaihtologiikan parantamista                                                  |
+| **yht.** | _*80 tuntia*_ |

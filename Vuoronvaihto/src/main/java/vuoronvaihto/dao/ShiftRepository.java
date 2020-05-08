@@ -17,13 +17,20 @@ import vuoronvaihto.domain.UserObject;
  */
 public interface ShiftRepository extends JpaRepository<Shift, Long> {
     
-    /**
-     * Spring JPA-automatisoitu tietokantahaku.
-     * SQL: SELECT * FROM ShiftRepository WHERE worker=u
-     * @param u Käyttäjä
-     * @return Lista vuoroista
+    /** Spring automated database method.
+     * @param u Worker
+     * @return List
      */
     public List<Shift> findByWorker(UserObject u);
+    
+    /**
+     * Spring JPA-automatisoitu tietokantahaku.
+     * SQL: SELECT * FROM ShiftRepository WHERE worker=u and dateOfShift AFTER d
+     * @param u Käyttäjä
+     * @param d LocalDate, should be now()
+     * @return List
+     */
+    public List<Shift> findByWorkerAndDateOfShiftAfter(UserObject u, LocalDate d);
     
     /**
      * Spring JPA-automatisoitu tietokantahaku.
@@ -34,6 +41,7 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
      * @return Lista vuoroista
      */
     public List<Shift> findByWorkerAndDateOfShiftBetween(UserObject u, LocalDate a, LocalDate b);
+    
     
     /**
      * Spring JPA-automatisoitu tietokantahaku.
