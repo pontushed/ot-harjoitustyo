@@ -190,20 +190,20 @@ public class ShiftViewController {
         UserObject u = daoService.getCurrentUser();
         HashMap<Shift,List<Shift>> outboundProposals = daoService.getOutboundProposals(u);
         HashMap<Shift,List<Shift>> inboundProposals = daoService.getInboundProposals(u);
-        System.out.println(outboundProposals);
-        System.out.println(inboundProposals);
         if (outboundProposals.isEmpty() && inboundProposals.isEmpty()) {
             aside.getChildren().add(new Label("Ei vuoronvaihtoehdotuksia."));
         }
         if (!outboundProposals.isEmpty()) {
             aside.getChildren().add(new Label("Tekemäsi ehdotukset:"));        
             outboundProposals.keySet().forEach(k -> {
+                aside.getChildren().add(new Label(k.getDateOfShift() + ": " + k.getShiftCode().getCode()));
                 showOutboundProposalEntry(k,outboundProposals.get(k));
             });
         }
         if (!inboundProposals.isEmpty()) {
             aside.getChildren().add(new Label("Ehdotukset sinulle:"));        
             inboundProposals.keySet().forEach(k -> {
+                aside.getChildren().add(new Label(k.getDateOfShift() + ": " + k.getShiftCode().getCode()));
                 showInboundProposalEntry(k,inboundProposals.get(k));
             });
         }
@@ -279,7 +279,7 @@ public class ShiftViewController {
                 proposeButton.setText("Pyydä");
                 break;
         }
-        String shiftText = s.getWorker().toString() + ":" + s.getShiftCode();
+        String shiftText = s.getWorker().toString() + ": " + s.getShiftCode();
         Label l = new Label(shiftText);
         hbox.getChildren().addAll(proposeButton,l);
         v.getChildren().add(hbox);
@@ -287,7 +287,7 @@ public class ShiftViewController {
         proposeButton.setOnAction((ActionEvent e) -> {
             switch (proposeButton.getText()) {
                 case "Hyväksy":                    
-                    //daoService.swap(s, selectedShift);
+                    daoService.swap(s, selectedShift);
                     proposalSuccess();
                     generateSchedule();                    
                     break;
@@ -308,14 +308,14 @@ public class ShiftViewController {
         proposals.forEach(p -> {
             HBox hbox = new HBox();
             Button proposeButton = new Button("Hyväksy");        
-            String shiftText = s.getWorker().toString() + ":" + s.getShiftCode();
+            String shiftText = p.getWorker().toString() + ": " + p.getShiftCode().getCode();
             Label l = new Label(shiftText);
             hbox.getChildren().addAll(proposeButton,l);
             aside.getChildren().add(hbox);
             proposeButton.setOnAction((ActionEvent e) -> {                         
                 daoService.swap(s, p);
                 proposalSuccess();
-                generateSchedule();                            
+                generateSchedule();                           
             });
         });
     }
@@ -325,13 +325,14 @@ public class ShiftViewController {
         proposals.forEach(p -> {
             HBox hbox = new HBox();
             Button proposeButton = new Button("Peru pyyntö");
-            String shiftText = s.getWorker().toString() + ":" + s.getShiftCode();
+            String shiftText = p.getWorker().toString() + ": " + p.getShiftCode().getCode();
             Label l = new Label(shiftText);
             hbox.getChildren().addAll(proposeButton,l);
             aside.getChildren().add(hbox);
             proposeButton.setOnAction((ActionEvent e) -> {                        
                 daoService.deleteProposal(s, p);
                 aside.getChildren().remove(hbox);
+                showProposals();
             });
         });
     }
