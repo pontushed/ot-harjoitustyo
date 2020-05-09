@@ -14,4 +14,4 @@
 |   7.5    |       9       | Vuoronvaihtologiikan parantamista                                                  |
 |   8.5    |       9       | Vuoronvaihtologiikan parantamista                                                  |
 |   9.5    |       9       | Viimeistelyä.                                                                      |
-| **yht.** | _*80 tuntia*_ |
+| **yht.** | _*89 tuntia*_ |
