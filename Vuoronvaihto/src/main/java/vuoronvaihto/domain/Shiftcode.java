@@ -37,12 +37,12 @@ public class Shiftcode extends AbstractPersistable<Long> {
      * Konstruktori.
      * @param code esim. AA0600
      * @param startTime esim. 06:00
-     * @param durationInMinutes esim. 7.5
+     * @param durationInHours esim. 7.5
      */
-    public Shiftcode(String code, String startTime, double durationInMinutes) {
+    public Shiftcode(String code, String startTime, double durationInHours) {
         this.code = code;
         this.startTime = LocalTime.parse(startTime);
-        this.durationInMinutes = (long) (durationInMinutes * 60);
+        this.durationInMinutes = (long) (durationInHours * 60);
     }
     
     public long getDurationInMinutes() {
@@ -78,9 +78,9 @@ public class Shiftcode extends AbstractPersistable<Long> {
             return "Vapaa"; 
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        String s = "[" + code + " (" +
+        String s = code + " (" +
                 startTime.format(formatter) + "-" + 
-                startTime.plusMinutes(durationInMinutes).format(formatter) + ")]";
+                startTime.plusMinutes(durationInMinutes).format(formatter) + ")";
         return s;
     }
     
@@ -90,7 +90,7 @@ public class Shiftcode extends AbstractPersistable<Long> {
      * @return true, mikäli sama
      */
     public boolean equals(Shiftcode v) {
-        return code.equals(v.getCode()) && startTime.equals(v.startTime) && (durationInMinutes == v.getDurationInMinutes());
+        return (this.code.equals(v.getCode()) && this.startTime == v.getStartTime() && (this.durationInMinutes == v.getDurationInMinutes()));
     }
         
 }

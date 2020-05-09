@@ -5,6 +5,8 @@
  */
 package vuoronvaihto.domain;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -64,6 +66,54 @@ public class DomainiTest {
         assertEquals(true,v.equals(new Shiftcode("AA0600","06:00",7)));
     }
     
+    @Test
+    public void vuorokoodiLuokkaTest2() {
+        Shiftcode a = new Shiftcode("Vapaa","06:00",7);
+        assertEquals(true,a.toString().equals("Vapaa"));
+        Shiftcode b = new Shiftcode("AA0600","06:00",7);
+        assertEquals(true,b.toString().equals("AA0600 (06:00-13:00)"));        
+    }
+    
+    @Test
+    public void vuorokoodiLuokkaTest3() {
+        Shiftcode a = new Shiftcode("Vapaa","06:00",7);        
+        Shiftcode b = new Shiftcode("AA0600","07:00",4);
+        assertFalse(a.equals(b));        
+    }
+    
+    @Test
+    public void vuorokoodiLuokkaTest4() {
+        Shiftcode a = new Shiftcode("AA0600","06:00",7);        
+        Shiftcode b = new Shiftcode("AA0600","07:00",7);
+        assertFalse(a.equals(b));        
+    }
+    
+    @Test
+    public void vuorokoodiLuokkaTest5() {
+        Shiftcode a = new Shiftcode("AA0600","06:00",7);        
+        Shiftcode b = new Shiftcode("AA0700","06:00",7);
+        assertFalse(a.equals(b));        
+    }
+    
+    @Test
+    public void vuorokoodiLuokkaTest6() {
+        Shiftcode a = new Shiftcode("AA0600","06:00",7);        
+        Shiftcode b = new Shiftcode("AA0600","06:00",8);
+        assertFalse(a.equals(b));        
+    }
+    
+    @Test
+    public void vuorokoodiLuokkaTest7() {
+        Shiftcode a = new Shiftcode("AA0600","06:00",7);        
+        a.setCode("TA0600");
+        assertTrue(a.getCode().equals("TA0600"));
+        a.setDurationInMinutes(300);
+        assertTrue(a.getDurationInMinutes() == 300);
+        long d = 420;
+        Shiftcode b = new Shiftcode("AA0700",LocalTime.parse("07:00"), d);
+        assertTrue(b.getDurationInMinutes() == 420);
+    }
+    
     /**
      * Testaa Shift-luokka.
      */
@@ -105,6 +155,65 @@ public class DomainiTest {
         Shift vuoro1 = new Shift(vk1,"2020-03-30",k);
         Shift vuoro2 = new Shift(vk2,"2020-03-31",k);
         assertEquals(false,Contract.checkRestTime(vuoro1, vuoro2));
+    }
+    
+    @Test
+    public void tarkistaTESLepoAika3() {
+        UserObject k = new UserObject("kayttaja1");
+        Shiftcode vk1 = new Shiftcode("AA1800","18:00", 7);
+        Shiftcode vk2 = new Shiftcode("Vapaa","12:00", 0);
+        Shift vuoro1 = new Shift(vk1,"2020-03-30",k);
+        Shift vuoro2 = new Shift(vk2,"2020-03-31",k);
+        assertEquals(true,Contract.checkRestTime(vuoro1, vuoro2));
+    }
+    
+    @Test
+    public void checkRestTimeBeforeAndAfterTest1() {
+        UserObject k = new UserObject("kayttaja1");
+        Shiftcode vk1 = new Shiftcode("AA1800","18:00", 7);
+        Shiftcode vk2 = new Shiftcode("Vapaa","12:00", 0);
+        Shiftcode vk3 = new Shiftcode("AA0545","05:45",7);
+        Shift vuoro1 = new Shift(vk1,"2020-03-29",k);
+        Shift vuoro2 = new Shift(vk2,"2020-03-30",k);
+        Shift vuoro3 = new Shift(vk3,"2020-03-31",k);
+        assertTrue(Contract.checkRestTimeBeforeAndAfter(vuoro1, vuoro2, vuoro3));
+    }
+    
+    @Test
+    public void checkRestTimeBeforeAndAfterTest2() {
+        UserObject k = new UserObject("kayttaja1");
+        Shiftcode vk1 = new Shiftcode("AA1800","18:00", 7);
+        Shiftcode vk2 = new Shiftcode("Vapaa","12:00", 0);
+        Shiftcode vk3 = new Shiftcode("AA0545","05:45",7);
+        Shift vuoro1 = new Shift(vk2,"2020-03-29",k);
+        Shift vuoro2 = new Shift(vk1,"2020-03-30",k);
+        Shift vuoro3 = new Shift(vk3,"2020-03-31",k);
+        assertFalse(Contract.checkRestTimeBeforeAndAfter(vuoro1, vuoro2, vuoro3));    
+    }
+    
+    @Test
+    public void checkRestTimeBeforeAndAfterTest3() {
+        UserObject k = new UserObject("kayttaja1");
+        Shiftcode vk1 = new Shiftcode("AA1800","18:00", 7);
+        Shiftcode vk2 = new Shiftcode("Vapaa","12:00", 0);
+        Shiftcode vk3 = new Shiftcode("AA0545","05:45",7);
+        Shift vuoro1 = new Shift(vk1,"2020-03-29",k);
+        Shift vuoro2 = new Shift(vk3,"2020-03-30",k);
+        Shift vuoro3 = new Shift(vk2,"2020-03-31",k);
+        assertFalse(Contract.checkRestTimeBeforeAndAfter(vuoro1, vuoro2, vuoro3));
+    }
+    
+    @Test
+    public void checkRestTimeBeforeAndAfterTest4() {
+        UserObject k = new UserObject("kayttaja1");
+        Shiftcode vk1 = new Shiftcode("AA1800","18:00", 7);
+        Shiftcode vk2 = new Shiftcode("Vapaa","12:00", 0);
+        Shiftcode vk3 = new Shiftcode("AA0545","05:45",7);
+        Shift vuoro1 = new Shift(vk3,"2020-03-29",k);
+        Shift vuoro2 = new Shift(vk3,"2020-03-30",k);
+        Shift vuoro3 = new Shift(vk3,"2020-03-31",k);
+        assertTrue(Contract.checkRestTimeBeforeAndAfter(vuoro1, vuoro2, null));
+        assertTrue(Contract.checkRestTimeBeforeAndAfter(null, vuoro2, vuoro3));
     }
     
     @Test 

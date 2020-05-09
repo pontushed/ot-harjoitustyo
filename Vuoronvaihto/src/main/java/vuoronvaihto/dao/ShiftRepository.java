@@ -93,4 +93,21 @@ public interface ShiftRepository extends JpaRepository<Shift, Long> {
     default public Shift getNextShift(LocalDate shiftDate, UserObject worker) {
         return findFirstByDateOfShiftAfterAndWorkerOrderByDateOfShiftAsc(shiftDate, worker);
     }
+
+    /**
+     * Get a list of Shifts for a range of dates.
+     * @param startDate range start
+     * @param endDate range end
+     * @return List of shifts
+     */
+    public List<Shift> findByDateOfShiftBetweenOrderByDateOfShift(LocalDate startDate, LocalDate endDate);
+    /**
+     * Get a list of Shifts for a range of dates.
+     * @param startDate range start
+     * @param endDate range end
+     * @return List of shifts
+     */
+    default public List<Shift> getShiftsForRange(LocalDate startDate, LocalDate endDate) {
+        return findByDateOfShiftBetweenOrderByDateOfShift(startDate, endDate);
+    }
 }

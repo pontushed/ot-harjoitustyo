@@ -6,12 +6,14 @@
 package vuoronvaihto.service;
 
 import java.time.LocalDate;
+import static java.time.temporal.ChronoUnit.DAYS;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,11 +36,11 @@ public class DaoService {
     @Autowired
     private ShiftRepository shiftRepository;
     
-//    @Autowired
-//    private ProposalRepository proposalRepository;
-    
     private UserObject u;
     
+    private List<Shift>[] shiftBuffer;
+    private List<UserObject> workers;
+   
     
     /**
      * Get the UserObject from the database. Create a new row if the user is not found.
@@ -75,7 +77,7 @@ public class DaoService {
         List<UserObject> users = userobjectRepository.findByHandle(handle);
         if (users.isEmpty()) {
             return false;
-        }
+        }        
         this.u = users.get(0);
         return true;
     }
@@ -107,6 +109,27 @@ public class DaoService {
     }
     
     /**
+     * Get shifts for a 14-day period from the database and store in the array
+     * 'shiftBuffer'
+     * @param middleDate middle of the period. The range will be +- 7 days.
+     */
+    private void generateShiftBuffer(LocalDate middleDate) {
+        final LocalDate startDate = middleDate.minusDays(7);
+        this.shiftBuffer = new ArrayList[14];
+        for (int i = 0; i < 14; i++) {
+            this.shiftBuffer[i] = new ArrayList<Shift>();
+        }
+        List<Shift> shifts = shiftRepository.getShiftsForRange(startDate, middleDate.plusDays(7));
+        shifts.forEach(s -> {
+            int index = (int) DAYS.between(startDate, s.getDateOfShift());
+            if (index >= 0 && index < 14) {
+                this.shiftBuffer[index].add(s);
+            }            
+        });        
+    }
+    
+    
+    /**
      * Get all applicable shifts, taking into consideration the contract constraints.
      * Constraints : endTime &lt;= next shift for current worker - restTime
      *               startTime &gt;= previous shift for current worker + restTime
@@ -117,8 +140,12 @@ public class DaoService {
      */
     public List<Shift> getApplicableShifts(Shift s) {
         LocalDate shiftDate = s.getDateOfShift();
+        generateShiftBuffer(shiftDate);        
         UserObject worker = s.getWorker();
         List<Shift> approvedShifts = new ArrayList<>();
+        if (!s.getTextCode().equals("Vapaa")) {
+            approvedShifts.addAll(getFreeWorkers(s));
+        }
         Shift prevShift = shiftRepository.getPrevShift(shiftDate, worker);
         Shift nextShift = shiftRepository.getNextShift(shiftDate, worker);        
         shiftRepository.findByDateOfShiftAndWorkerNot(shiftDate, worker)
@@ -142,12 +169,27 @@ public class DaoService {
      */
     @Transactional
     public void addProposal(Shift origS, Shift newS) {
-        Shift s = shiftRepository.getOne(origS.getId());
-        List<Shift> props = s.getProposals();
-        if (!props.contains(newS)) {
-            props.add(newS);
+        Shift s;
+        if (origS.getTextCode().equals("Vapaa")) {
+            s = shiftRepository.save(origS);
+            s.getProposals().add(newS);
+            shiftRepository.save(s);
+        } else if (newS.getTextCode().equals("Vapaa")) {
+            newS = shiftRepository.save(newS);
+            s = shiftRepository.getOne(origS.getId());
+            List<Shift> props = s.getProposals();
+            if (!props.contains(newS)) {
+                props.add(newS);
+                shiftRepository.save(s);        
+            }
+        } else {
+            s = shiftRepository.getOne(origS.getId());
+            List<Shift> props = s.getProposals();
+            if (!props.contains(newS)) {
+                props.add(newS);
+                shiftRepository.save(s);        
+            }
         }
-        shiftRepository.save(s);
     }
 
     /**
@@ -161,8 +203,9 @@ public class DaoService {
     }
             
     /**
-     * Delete proposals for a certain shift and user.
+     * Delete proposals for a certain shift and proposed shift.
      * @param s Shift
+     * @param r Proposal shift
      */
     @Transactional
     public void deleteProposal(Shift s, Shift r) {        
@@ -174,16 +217,29 @@ public class DaoService {
      * Swap shifts and delete all proposals concerning these shifts.
      * @param a First shift
      * @param b Second shift
+     * @return true if successful
      */
     @Transactional
-    public void swap(Shift a, Shift b) {
+    public boolean swap(Shift a, Shift b) {
+        if (a.getShiftCode().equals(b.getShiftCode()) && a.getDateOfShift().equals(b.getDateOfShift())) {
+            return false;
+        }
         UserObject tmp = a.getWorker();
         a.setWorker(b.getWorker());
         b.setWorker(tmp);
         a.getProposals().clear();
         b.getProposals().clear();
-        shiftRepository.save(a);
-        shiftRepository.save(b);        
+        if (a.getTextCode().equals("Vapaa")) {
+            shiftRepository.delete(a);
+            shiftRepository.save(b);
+        } else if (b.getTextCode().equals("Vapaa")) {
+            shiftRepository.delete(b);
+            shiftRepository.save(a);
+        } else {
+            shiftRepository.save(a);
+            shiftRepository.save(b);
+        }
+        return true;
     }
     
     /**
@@ -191,14 +247,14 @@ public class DaoService {
      * @param u Worker
      * @return List or null
      */
-    @Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
-    public HashMap<Shift,List<Shift>> getOutboundProposals(UserObject u) {
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, noRollbackFor = Exception.class)
+    public HashMap<Shift, List<Shift>> getOutboundProposals(UserObject u) {
         List<Shift> shifts = shiftRepository.findByWorkerAndDateOfShiftAfter(u, LocalDate.now());
-        HashMap<Shift,List<Shift>> proposals = new HashMap<>();
+        HashMap<Shift, List<Shift>> proposals = new HashMap<>();
         shifts.forEach(s -> {
             List<Shift> props = s.getProposals();
             if (!props.isEmpty()) {
-                proposals.put(s,props);
+                proposals.put(s, props);
             }
         });
         return proposals;
@@ -209,16 +265,40 @@ public class DaoService {
      * @param u Worker
      * @return List or null
      */
-    @Transactional(propagation=Propagation.REQUIRED, readOnly=true, noRollbackFor=Exception.class)
-    public HashMap<Shift,List<Shift>> getInboundProposals(UserObject u) {
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true, noRollbackFor = Exception.class)
+    public HashMap<Shift, List<Shift>> getInboundProposals(UserObject u) {
         List<Shift> shifts = shiftRepository.findByWorkerAndDateOfShiftAfter(u, LocalDate.now());
-        HashMap<Shift,List<Shift>> proposals = new HashMap<>();
+        HashMap<Shift, List<Shift>> proposals = new HashMap<>();
         shifts.forEach(s -> {
             List<Shift> props = s.getProposed();
             if (!props.isEmpty()) {
-                proposals.put(s,props);
+                proposals.put(s, props);
+            }
+        });        
+        return proposals;
+    }
+
+    private List<Shift> getFreeWorkers(Shift s) {
+        this.workers = userobjectRepository.findAll();
+        Shiftcode noWork = shiftcodeRepository.findByCode("Vapaa");
+        ArrayList<Shift> free = new ArrayList<>();
+        HashSet<UserObject> working = new HashSet();
+        if (this.shiftBuffer[7] == null) {
+            return free;
+        }
+        // Get working individuals today
+        for (Shift bufferShift : shiftBuffer[7]) {
+            working.add(bufferShift.getWorker());
+        }
+        this.workers.forEach(u -> {
+            if (!working.contains(u) && !u.equals(this.u)) {
+                free.add(new Shift(noWork, s.getDateOfShift().toString(), u));
             }
         });
-        return proposals;
+        return free;
+    }
+
+    public Shiftcode getFreeShift() {
+        return shiftcodeRepository.findByCode("Vapaa");
     }
 }

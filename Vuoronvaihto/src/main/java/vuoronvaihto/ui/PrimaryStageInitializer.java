@@ -11,7 +11,7 @@ import net.rgielen.fxweaver.core.FxWeaver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
-import vuoronvaihto.service.MockService;
+import vuoronvaihto.service.UtilityService;
 
 /**
  *
@@ -23,7 +23,7 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
     private final FxWeaver fxWeaver;
     
     @Autowired
-    private MockService ts;
+    private UtilityService ts;
 
     @Autowired
     public PrimaryStageInitializer(FxWeaver fxWeaver) {

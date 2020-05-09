@@ -17,13 +17,10 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,9 +34,9 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Data
 public class Shift extends AbstractPersistable<Long> {
     
-    @Id
-    @GeneratedValue
-    private Long id;
+//    @Id
+//    @GeneratedValue
+//    private Long Id;
     
     @ManyToOne
     @Getter
@@ -52,24 +49,24 @@ public class Shift extends AbstractPersistable<Long> {
     @Getter
     private UserObject worker;
     
-    @ManyToMany(fetch=FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
-        name="PROPOSAL",
-        joinColumns=
-            @JoinColumn(name="SHIFT_ID", referencedColumnName="ID"),
-        inverseJoinColumns=
-            @JoinColumn(name="REPLACING_SHIFT_ID", referencedColumnName="ID")
-    )
+        name = "PROPOSAL",
+        joinColumns =
+            @JoinColumn(name = "SHIFT_ID", referencedColumnName = "ID"),
+        inverseJoinColumns =
+            @JoinColumn(name = "REPLACING_SHIFT_ID", referencedColumnName = "ID")
+        )
     List<Shift> proposals;
        
-    @ManyToMany(mappedBy="proposals", fetch=FetchType.EAGER, cascade = CascadeType.ALL)    
+    @ManyToMany(mappedBy = "proposals", fetch = FetchType.EAGER, cascade = CascadeType.ALL)    
     List<Shift> proposed;
         
     /**
-     * Konstruktori.
-     * @param shiftCode vuoron koodi, sisältää alkamisajan ja keston.
-     * @param dateOfShift Vuoron päivämäärä muodossa YYYY-MM-DD
-     * @param worker Kayttaja-olio
+     * Constructor.
+     * @param shiftCode shift code, including start time and duration.
+     * @param dateOfShift The date in format YYYY-MM-DD
+     * @param worker User object
      */
     public Shift(Shiftcode shiftCode, String dateOfShift, UserObject worker) {
         this.shiftCode = shiftCode;
@@ -85,6 +82,10 @@ public class Shift extends AbstractPersistable<Long> {
     
     public LocalDateTime getFinishTime() {        
         return this.shiftCode.getFinishTime(dateOfShift);
+    }
+    
+    public String getTextCode() {
+        return this.shiftCode.toString();
     }
 
     @Override
