@@ -6,7 +6,7 @@ Sovelluksen avulla käyttäjät voivat ehdottaa vaihtoja työvuorolistaan sekä 
 
 ## Release
 
-[Release](https://github.com/pontushed/ot-harjoitustyo/releases/tag/final)
+[Loppupalautus](https://github.com/pontushed/ot-harjoitustyo/releases/tag/loppupalautus)
 
 ## Dokumentaatio
 

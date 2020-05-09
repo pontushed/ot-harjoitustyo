@@ -21,28 +21,30 @@ import vuoronvaihto.dao.*;
 
 /**
  * Service class for DAO.
+ * 
  * @author pontus
  */
 @Service
 public class DaoService {
-    
+
     @Autowired
     private UserObjectRepository userobjectRepository;
-    
+
     @Autowired
     private ShiftCodeRepository shiftcodeRepository;
-    
+
     @Autowired
     private ShiftRepository shiftRepository;
-    
+
     private UserObject u;
-    
+
     private List<Shift>[] shiftBuffer;
     private List<UserObject> workers;
-   
-    
+
     /**
-     * Get the UserObject from the database. Create a new row if the user is not found.
+     * Get the UserObject from the database. Create a new row if the user is not
+     * found.
+     * 
      * @param handle Käyttäjän tunnus.
      * @return UserObject Kayttaja-olio
      */
@@ -52,11 +54,13 @@ public class DaoService {
             return userobjectRepository.save(new UserObject(handle));
         } else {
             return users.get(0);
-        }        
+        }
     }
-    
+
     /**
-     * Get the Shiftcode from the database. Create a new row if the shiftcode is not found.
+     * Get the Shiftcode from the database. Create a new row if the shiftcode is not
+     * found.
+     * 
      * @param v Shiftcode-olio
      * @return Shiftcode-olio
      */
@@ -64,11 +68,12 @@ public class DaoService {
         if (shiftcodeRepository.findByCode(v.getCode()) == null) {
             shiftcodeRepository.save(v);
         }
-        return v;        
+        return v;
     }
 
     /**
      * Try to log in.
+     * 
      * @param handle The username.
      * @return true if log in ok, false if not.
      */
@@ -76,40 +81,45 @@ public class DaoService {
         List<UserObject> users = userobjectRepository.findByHandle(handle);
         if (users.isEmpty()) {
             return false;
-        }        
+        }
         this.u = users.get(0);
         return true;
     }
 
     /**
      * Get the current logged in user.
+     * 
      * @return UserObject current user, null if no user logged in.
      */
     public UserObject getCurrentUser() {
         return u;
     }
-    
+
     /**
      * Log out the current user.
-     */    
+     */
     public void logout() {
         this.u = null;
     }
-    
-    /** Get Shift schedule for a date range for a selected worker.
+
+    /**
+     * Get Shift schedule for a date range for a selected worker.
+     * 
      * @param startDate starting date
-     * @param endDate ending date
-     * @param w Worker
-     * @return List of dates and shifts. If there is no shift on a date, then there will a "free" shift
+     * @param endDate   ending date
+     * @param w         Worker
+     * @return List of dates and shifts. If there is no shift on a date, then there
+     *         will a "free" shift
      */
     public List<Shift> getSchedule(LocalDate startDate, LocalDate endDate, UserObject w) {
-        List<Shift> shifts = shiftRepository.findByWorkerAndDateOfShiftBetween(w, startDate, endDate);        
+        List<Shift> shifts = shiftRepository.findByWorkerAndDateOfShiftBetween(w, startDate, endDate);
         return shifts;
     }
-    
+
     /**
      * Get shifts for a 14-day period from the database and store in the array
      * 'shiftBuffer'
+     * 
      * @param middleDate middle of the period. The range will be +- 7 days.
      */
     private void generateShiftBuffer(LocalDate middleDate) {
@@ -123,31 +133,31 @@ public class DaoService {
             int index = (int) DAYS.between(startDate, s.getDateOfShift());
             if (index >= 0 && index < 14) {
                 this.shiftBuffer[index].add(s);
-            }            
-        });        
-    }        
-    
+            }
+        });
+    }
+
     /**
-     * Get all applicable shifts, taking into consideration the contract constraints.
-     * Constraints : endTime &lt;= next shift for current worker - restTime
-     *               startTime &gt;= previous shift for current worker + restTime
-     * First examine the proposed shifts for the current worker, then reverse examine 
-     * how the shift that is proposed by the worker is applicable for the others.
+     * Get all applicable shifts, taking into consideration the contract
+     * constraints. Constraints : endTime &lt;= next shift for current worker -
+     * restTime startTime &gt;= previous shift for current worker + restTime First
+     * examine the proposed shifts for the current worker, then reverse examine how
+     * the shift that is proposed by the worker is applicable for the others.
+     * 
      * @param s shift to examine
      * @return List of shifts that are available for exchange
      */
     public List<Shift> getApplicableShifts(Shift s) {
         LocalDate shiftDate = s.getDateOfShift();
-        generateShiftBuffer(shiftDate);        
+        generateShiftBuffer(shiftDate);
         UserObject worker = s.getWorker();
         List<Shift> approvedShifts = new ArrayList<>();
         if (!s.getTextCode().equals("Vapaa")) {
             approvedShifts.addAll(getFreeWorkers(s));
         }
         Shift prevShift = shiftRepository.getPrevShift(shiftDate, worker);
-        Shift nextShift = shiftRepository.getNextShift(shiftDate, worker);        
-        shiftRepository.findByDateOfShiftAndWorkerNot(shiftDate, worker)
-                .stream()
+        Shift nextShift = shiftRepository.getNextShift(shiftDate, worker);
+        shiftRepository.findByDateOfShiftAndWorkerNot(shiftDate, worker).stream()
                 .filter((shift) -> !shift.getShiftCode().equals(s.getShiftCode()))
                 .filter((shift) -> (Contract.checkRestTimeBeforeAndAfter(prevShift, shift, nextShift)))
                 .forEachOrdered((shift) -> {
@@ -156,15 +166,16 @@ public class DaoService {
         return approvedShifts.stream().filter((shift) -> {
             Shift prev = shiftRepository.getPrevShift(shiftDate, shift.getWorker());
             Shift next = shiftRepository.getNextShift(shiftDate, shift.getWorker());
-            boolean reverseOK = Contract.checkRestTimeBeforeAndAfter(prev, s, next);                        
+            boolean reverseOK = Contract.checkRestTimeBeforeAndAfter(prev, s, next);
             return reverseOK;
         }).collect(Collectors.toList());
-    }            
+    }
 
     /**
      * Add a new proposal.
+     * 
      * @param origS Original shift
-     * @param newS New shift
+     * @param newS  New shift
      */
     @Transactional
     public void addProposal(Shift origS, Shift newS) {
@@ -177,22 +188,23 @@ public class DaoService {
             newS = shiftRepository.save(newS);
             s = shiftRepository.getOne(origS.getId());
             List<Shift> props = s.getProposals();
-            if (!props.contains(newS)) {                
+            if (!props.contains(newS)) {
                 props.add(newS);
-                shiftRepository.save(s);        
+                shiftRepository.save(s);
             }
         } else {
             s = shiftRepository.getOne(origS.getId());
             List<Shift> props = s.getProposals();
             if (!props.contains(newS)) {
                 props.add(newS);
-                shiftRepository.save(s);        
+                shiftRepository.save(s);
             }
         }
     }
 
     /**
      * Get proposals for a certain shift.
+     * 
      * @param s Shift
      * @return List of Proposal objects
      */
@@ -200,20 +212,22 @@ public class DaoService {
     public List<Shift> getProposals(Shift s) {
         return s.getProposals();
     }
-            
+
     /**
      * Delete proposals for a certain shift and proposed shift.
+     * 
      * @param s Shift
      * @param r Proposal shift
      */
     @Transactional
-    public void deleteProposal(Shift s, Shift r) {        
+    public void deleteProposal(Shift s, Shift r) {
         s.getProposals().remove(r);
         shiftRepository.save(s);
     }
 
     /**
      * Swap shifts and delete all proposals concerning these shifts.
+     * 
      * @param a First shift
      * @param b Second shift
      * @return true if successful
@@ -240,9 +254,10 @@ public class DaoService {
         }
         return true;
     }
-    
+
     /**
      * Get a list of outbound proposals for a worker.
+     * 
      * @param u Worker
      * @return List or null
      */
@@ -261,6 +276,7 @@ public class DaoService {
 
     /**
      * Get a list of inbound proposals for a worker.
+     * 
      * @param u Worker
      * @return List or null
      */
@@ -273,10 +289,16 @@ public class DaoService {
             if (!props.isEmpty()) {
                 proposals.put(s, props);
             }
-        });        
+        });
         return proposals;
     }
 
+    /**
+     * Get a list of free workers for the same date.
+     * 
+     * @param s The shift that is used for comparison.
+     * @return List of "free" shifts for the same date.
+     */
     public ArrayList<Shift> getFreeWorkers(Shift s) {
         System.out.println("Pääsi ainakin tänne asti");
         this.workers = userobjectRepository.findAll();
@@ -298,6 +320,11 @@ public class DaoService {
         return free;
     }
 
+    /**
+     * Helper function to return a Shiftcode object with a free shift.
+     * 
+     * @return Shiftcode with free shift properties.
+     */
     public Shiftcode getFreeShift() {
         return shiftcodeRepository.findByCode("Vapaa");
     }
