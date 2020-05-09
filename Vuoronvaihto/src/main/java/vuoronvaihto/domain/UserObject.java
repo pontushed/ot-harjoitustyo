@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 /**
- * Käyttäjä-olion toteuttava luokka.
+ * Class describing a worker.
  * @author pontus
  */
 @Entity
@@ -31,9 +31,9 @@ public class UserObject extends AbstractPersistable<Long> {
     }
 
     /**
-     * equals-metodi luokalle.
-     * @param k kayttaja, johon verrataan
-     * @return true, mikäli sama.
+     * equals-method for the class.
+     * @param k user to compare to.
+     * @return true, if same.
      */
     public boolean equals(UserObject k) {
         return handle.equals(k.getHandle());

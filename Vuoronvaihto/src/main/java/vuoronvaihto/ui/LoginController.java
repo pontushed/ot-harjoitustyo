@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component;
 import vuoronvaihto.service.DaoService;
 
 /**
- *
+ * Controller for the login window.
  * @author pontus
  */
 @Component

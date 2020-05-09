@@ -6,7 +6,7 @@
 package vuoronvaihto.dao;
 
 /**
- * JPA-rajapinta Vuorokoodi-luokalle.
+ * JPA-interface for Shiftcode class.
  * @author pontus
  */
 import java.time.LocalTime;
@@ -17,17 +17,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ShiftCodeRepository extends JpaRepository<Shiftcode, Long> {
     
     /**
-     * Etsi vuoro koodin perusteella. koodi on määritelty unique-parametrilla
-     * tietokannassa.
-     * @param code Haettu vuorokoodi
-     * @return Shiftcode, jonka vuorokoodi=code.
+     * Find shiftcode entity by code string.
+     * @param code The code string.
+     * @return Shiftcode, where the shiftcode=code.
      */
     public Shiftcode findByCode(String code);
     
     /**
-     * Etsi vuoroja alkamisajan perusteella.
-     * @param startTime Aika, jolloin vuoro alkaa.
-     * @return Lista vuoroista, jotka alkavat haettuna aikana.
+     * Find shiftcodes by start time.
+     * @param startTime Starting time of the shift.
+     * @return List of shiftcodes that represent the startTime.
      */
     public List<Shiftcode> findByStartTime(LocalTime startTime);
 }

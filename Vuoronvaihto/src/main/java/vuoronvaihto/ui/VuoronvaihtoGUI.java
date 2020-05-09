@@ -14,7 +14,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * Graafinen käyttöliittymä.
+ * GUI for the application.
  * @author pontus
  */
 public class VuoronvaihtoGUI extends Application {

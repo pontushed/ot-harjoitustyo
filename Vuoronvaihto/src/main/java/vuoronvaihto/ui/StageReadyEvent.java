@@ -9,7 +9,7 @@ import javafx.stage.Stage;
 import org.springframework.context.ApplicationEvent;
 
 /**
- *
+ * This will fire when the application starts.
  * @author pontus
  */
 public class StageReadyEvent extends ApplicationEvent {

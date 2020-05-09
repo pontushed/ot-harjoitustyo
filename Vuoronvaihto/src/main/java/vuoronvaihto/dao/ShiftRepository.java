@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import vuoronvaihto.domain.UserObject;
 
 /**
- * JPA-rajapinta Shift(Vuoro)-luokalle.
+ * JPA-interface for class Shift.
  * @author pontus
  */
 public interface ShiftRepository extends JpaRepository<Shift, Long> {

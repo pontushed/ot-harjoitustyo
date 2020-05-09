@@ -32,7 +32,7 @@ import vuoronvaihto.dao.*;
 import vuoronvaihto.domain.*;
 import vuoronvaihto.service.DaoService;
 /**
- *
+ * Controller class for the main view.
  * @author pontus
  */
 @Component

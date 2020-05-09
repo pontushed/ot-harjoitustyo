@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import vuoronvaihto.service.UtilityService;
 
 /**
- *
+ * Initialize the first view when the application starts.
  * @author pontus
  */
 @Component

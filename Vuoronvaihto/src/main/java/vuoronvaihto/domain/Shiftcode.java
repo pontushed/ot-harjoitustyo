@@ -17,8 +17,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.jpa.domain.AbstractPersistable;
 
 /**
- * 
- * Tämä luokka kuvaa Vuorokoodia.
+ * This class represents the shiftcode and its properties.
  */
 
 @Entity
@@ -35,9 +34,9 @@ public class Shiftcode extends AbstractPersistable<Long> {
     
     /**
      * Konstruktori.
-     * @param code esim. AA0600
-     * @param startTime esim. 06:00
-     * @param durationInHours esim. 7.5
+     * @param code eg. "AA0600"
+     * @param startTime eg. "06:00"
+     * @param durationInHours eg. 7.5
      */
     public Shiftcode(String code, String startTime, double durationInHours) {
         this.code = code;
@@ -54,7 +53,7 @@ public class Shiftcode extends AbstractPersistable<Long> {
     }
 
     /**
-     * Palauta vuoron alkamisaika.
+     * Starting time of shift as LocalTime
      * @return alkamisaika LocalTimena
      */
     public LocalTime getStartTime() {
@@ -62,10 +61,10 @@ public class Shiftcode extends AbstractPersistable<Long> {
     }
 
     /**
-     * Palauta vuoron loppumisaika LocalDateTimena, kun tiedetään
-     * alkamispäivämäärä. Käytä tätä, kun lasket vuorojen välistä lepoaikaa.
-     * @param date Vuoron alkamisajan päivämäärä LocalDatena
-     * @return loppumisaika LocalDateTimena
+     * Returns the calculated finish time of the shift. Used when
+     * examining the time between end of previous shift and start of the next one.
+     * @param date The date when the shift begins.
+     * @return The time when the shift ends as LocalDateTime.
      */
     public LocalDateTime getFinishTime(LocalDate date) {
         LocalDateTime finishTime = LocalDateTime.of(date, startTime);
@@ -85,9 +84,9 @@ public class Shiftcode extends AbstractPersistable<Long> {
     }
     
     /**
-     * equals-metodi luokalle.
-     * @param v vuorokoodi, johon verrataan
-     * @return true, mikäli sama
+     * equals-method for the class.
+     * @param v the shift to compare to.
+     * @return true, if same.
      */
     public boolean equals(Shiftcode v) {
         return (this.code.equals(v.getCode()) && this.startTime == v.getStartTime() && (this.durationInMinutes == v.getDurationInMinutes()));

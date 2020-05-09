@@ -33,11 +33,7 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @AllArgsConstructor
 @Data
 public class Shift extends AbstractPersistable<Long> {
-    
-//    @Id
-//    @GeneratedValue
-//    private Long Id;
-    
+        
     @ManyToOne
     @Getter
     private Shiftcode shiftCode;
@@ -94,14 +90,14 @@ public class Shift extends AbstractPersistable<Long> {
     }
     
     /**
-     * equals-metodi luokalle.
-     * @param v vuoro, johon verrataan
+     * equals-method for the class.
+     * @param s shift to compare to.
      * @return true Mikäli sama
      */
-    public boolean equals(Shift v) {
-        return (v.getStartTime().equals(this.getStartTime()))
-                && (v.getWorker().equals(this.worker))
-                && (v.shiftCode.equals(this.shiftCode));
+    public boolean equals(Shift s) {
+        return (s.getStartTime().equals(this.getStartTime()))
+                && (s.getWorker().equals(this.worker))
+                && (s.shiftCode.equals(this.shiftCode));
     }
               
 }
