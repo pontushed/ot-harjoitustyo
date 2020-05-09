@@ -96,7 +96,7 @@
                     <excludes>
                         <exclude>vuoronvaihto/ui/*</exclude>
                         <exclude>vuoronvaihto/Main*</exclude>
-                        <exlude>vuoronvaihto/Vuoronvaihto*</exlude>
+                        <exclude>vuoronvaihto/Vuoronvaihto*</exclude>
                     </excludes>
                 </configuration>
                 <executions>

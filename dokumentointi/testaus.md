@@ -17,6 +17,8 @@ Testaus tehdään SpringRunnerilla käyttämällä muistiin tehtyä tilapäistä
 Testien ajossa on ollut ongelmia Spring-sovelluskehyksen takia. Testit eivät tunnu löytävän daoService-luokan kaikkia metodeja, enkä keksi tähän enää mitään ratkaisua. Tästä johtuen testikattavuus
 jää daoService-luokan osalta alhaiseksi.
 
+![testikattavuus](testikattavuus.png)
+
 ## Järjestelmätestaus
 
 Sovelluksen järjestelmätestaus on suoritettu manuaalisesti.

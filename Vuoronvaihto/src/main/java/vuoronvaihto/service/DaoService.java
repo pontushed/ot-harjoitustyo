@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -113,7 +112,7 @@ public class DaoService {
      * 'shiftBuffer'
      * @param middleDate middle of the period. The range will be +- 7 days.
      */
-    public void generateShiftBuffer(LocalDate middleDate) {
+    private void generateShiftBuffer(LocalDate middleDate) {
         final LocalDate startDate = middleDate.minusDays(7);
         this.shiftBuffer = new ArrayList[14];
         for (int i = 0; i < 14; i++) {
@@ -126,8 +125,7 @@ public class DaoService {
                 this.shiftBuffer[index].add(s);
             }            
         });        
-    }
-    
+    }        
     
     /**
      * Get all applicable shifts, taking into consideration the contract constraints.
@@ -179,7 +177,7 @@ public class DaoService {
             newS = shiftRepository.save(newS);
             s = shiftRepository.getOne(origS.getId());
             List<Shift> props = s.getProposals();
-            if (!props.contains(newS)) {
+            if (!props.contains(newS)) {                
                 props.add(newS);
                 shiftRepository.save(s);        
             }
@@ -279,7 +277,8 @@ public class DaoService {
         return proposals;
     }
 
-    public List<Shift> getFreeWorkers(Shift s) {
+    public ArrayList<Shift> getFreeWorkers(Shift s) {
+        System.out.println("Pääsi ainakin tänne asti");
         this.workers = userobjectRepository.findAll();
         Shiftcode noWork = shiftcodeRepository.findByCode("Vapaa");
         ArrayList<Shift> free = new ArrayList<>();

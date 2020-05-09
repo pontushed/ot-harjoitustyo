@@ -291,6 +291,32 @@ public class ServiceTest {
     }
     
     @Test
+    public void addProposalTest3() {
+        UserObject a = daoService.getOrCreateUser("test2");
+        UserObject b = daoService.getOrCreateUser("test3");
+        Shiftcode koodi_AA0700 = daoService.getOrCreateShiftcode(new Shiftcode("AA0700", "07:00", 7));
+        Shiftcode noWork = daoService.getFreeShift();        
+        Shift a1 = shiftRepository.save(new Shift(koodi_AA0700, "2020-02-01", a));
+        Shift b1 = shiftRepository.save(new Shift(noWork, "2020-02-02", b));        
+        daoService.addProposal(a1, b1);        
+        List<Shift> props = daoService.getProposals(a1);
+        assertTrue(props.size() == 1);
+    }
+    
+    @Test
+    public void addProposalTest4() {
+        UserObject a = daoService.getOrCreateUser("test2");
+        UserObject b = daoService.getOrCreateUser("test3");
+        Shiftcode koodi_AA0700 = daoService.getOrCreateShiftcode(new Shiftcode("AA0700", "07:00", 7));
+        Shiftcode noWork = daoService.getFreeShift();        
+        Shift a1 = shiftRepository.save(new Shift(koodi_AA0700, "2020-02-01", a));
+        Shift b1 = shiftRepository.save(new Shift(noWork, "2020-02-02", b));        
+        daoService.addProposal(b1, a1);        
+        List<Shift> props = daoService.getProposals(b1);
+        assertTrue(props.size() == 1);
+    }
+    
+    @Test
     public void swapTest1() {
         UserObject a = daoService.getOrCreateUser("test2");
         Shiftcode koodi_AA1800 = daoService.getOrCreateShiftcode(new Shiftcode("AA1800", "18:00", 7));
@@ -312,6 +338,24 @@ public class ServiceTest {
         Shiftcode koodi_AA1800 = daoService.getOrCreateShiftcode(new Shiftcode("AA1800", "18:00", 7));
         Shift a1 = shiftRepository.save(new Shift(koodi_AA1800, "2020-02-01", a));
         assertTrue(daoService.swap(new Shift(koodi_AA1800, "2020-02-02", a), a1));
+    }
+    
+    @Test
+    public void swapTest4() {
+        UserObject a = daoService.getOrCreateUser("test2");
+        Shiftcode noWork = shiftcodeRepository.findByCode("Vapaa");
+        Shiftcode koodi_AA1800 = daoService.getOrCreateShiftcode(new Shiftcode("AA1800", "18:00", 7));
+        Shift a1 = shiftRepository.save(new Shift(koodi_AA1800, "2020-02-01", a));
+        assertTrue(daoService.swap(new Shift(noWork, "2020-02-02", a), a1));
+    }
+    
+    @Test
+    public void swapTest5() {        
+        UserObject a = daoService.getOrCreateUser("test2");
+        Shiftcode noWork = shiftcodeRepository.findByCode("Vapaa");
+        Shiftcode koodi_AA1800 = daoService.getOrCreateShiftcode(new Shiftcode("AA1800", "18:00", 7));
+        Shift a1 = shiftRepository.save(new Shift(koodi_AA1800, "2020-02-01", a));
+        assertTrue(daoService.swap(a1, new Shift(noWork, "2020-02-02", a)));
     }
     
     @Test
@@ -413,18 +457,9 @@ public class ServiceTest {
         HashMap<Shift,List<Shift>> props = daoService.getOutboundProposals(a);
         assertTrue(props.isEmpty());
     }
-    
-    //@Test
-    public void freeWorkersTest1() {
-        String tomorrow = LocalDate.now().plusDays(3).toString();
-        UserObject a = daoService.getOrCreateUser("test2");
-        UserObject b = daoService.getOrCreateUser("test3");
-        UserObject c = daoService.getOrCreateUser("test4");
-        Shiftcode koodi_AA0700 = daoService.getOrCreateShiftcode(new Shiftcode("AA0700", "07:00", 7));                       
-        Shift a2 = new Shift(koodi_AA0700, tomorrow, a);
-        a2 = shiftRepository.save(a2);       
-        daoService.generateShiftBuffer(LocalDate.now());
-        List<Shift> l = daoService.getFreeWorkers(a2);
-        assertTrue(l.size() == 2);
-    }
+        
+    @Test
+    public void getFreeShiftTest() {
+        assertTrue(daoService.getFreeShift().equals(new Shiftcode("Vapaa", "12:00", 0)));
+    }        
 }

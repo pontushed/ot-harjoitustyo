@@ -1,10 +1,14 @@
-# Ohjelmistotekniikka kevät 2020, harjoitustyö
+# Vuoronvaihtosovellus
 
-## Projekti, Vuoronvaihtosovellus
+### Ohjelmistotekniikka kevät 2020, harjoitustyö
 
-[1. Release](https://github.com/pontushed/ot-harjoitustyo/releases/tag/viikko5)
+Sovelluksen avulla käyttäjät voivat ehdottaa vaihtoja työvuorolistaan sekä tarkistaa työvuoronsa. Sovellus huolehtii siitä, että sekä kuvitteellisen TESin että työaikalainsäädännön mukaisia lepoaikasäännöksiä noudatetaan. Työpaikalla vuoronvaihto on perinteisesti tehty paperiseen vuorolistaan, mutta useiden vuoronvaihtojen jälkeen listan luvussa on välillä ilmennyt epäselvyyksiä ja joskus on käynyt niin, että vuorolistasta ei enää saa selvää kenen pitäisi olla töissä.
 
-[2. Release](https://github.com/pontushed/ot-harjoitustyo/releases/tag/viikko6)
+## Release
+
+[Release](https://github.com/pontushed/ot-harjoitustyo/releases/tag/final)
+
+## Dokumentaatio
 
 [Käyttöohje](dokumentointi/kayttoohje.md)
 
@@ -14,22 +18,7 @@
 
 [Arkkitehtuuri](dokumentointi/arkkitehtuuri.md)
 
-**_30.3.2020_**
-
-Sovelluksessa on vasta ohjelmoituna muutama luokka ja kaksi testiä. Seuraavaksi teen DAO:n ja tietokantayhteyden, jonka jälkeen alan työstämään GUI:ta.
-
-**_6.4.2020_**
-
-Sovellus on nyt muokattu Spring Boot-sovellukseksi. Käytän JPA:ta tietokantatoimintoihin.
-CheckStyle otettu käyttöön.
-
-**_21.4.2020_**
-
-GUI:n tekeminen on edistynyt. Käytän siinä FxWeaver-kirjastoa, jolla saa JavaFX:n sovitettua yhteen Spring Bootin kanssa, jotta pääsen hyödyntämään Spring Bootin JPA-tietokantaominaisuuksia.
-
-**_28.4.2020_**
-
-Jatkoin GUI:n tekemistä ja toiminnallisuuden laajentamista. Vuoronvaihtoehdotuksia voi nyt tehdä tietokantaan, mutta ne eivät vielä näy toiselle käyttäjälle.
+[Testaus](dokumentointi/testaus.md)
 
 ## Komentorivikomennot
 
@@ -80,3 +69,5 @@ Suoritus:
 ```
 java -jar target/Vuoronvaihto-1.0-SNAPSHOT.jar
 ```
+
+Ohjelma olettaa, että alustusdata löytyy alihakemistosta `./data`.
