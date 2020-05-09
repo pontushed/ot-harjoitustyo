@@ -13,4 +13,5 @@
 |   28.4   |       8       | Lisää toiminnallisuutta ja tappelua tietokantatoimintojen kanssa, lisää testejä    |
 |   7.5    |       9       | Vuoronvaihtologiikan parantamista                                                  |
 |   8.5    |       9       | Vuoronvaihtologiikan parantamista                                                  |
+|   9.5    |       9       | Viimeistelyä.                                                                      |
 | **yht.** | _*80 tuntia*_ |

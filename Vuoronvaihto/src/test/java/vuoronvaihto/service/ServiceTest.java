@@ -7,6 +7,7 @@ package vuoronvaihto.service;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -55,7 +56,7 @@ public class ServiceTest {
     private DaoService daoService;
     
     @Autowired
-    private UtilityService mockService;
+    private UtilityService utilService;
     
     public ServiceTest() {
     }
@@ -70,7 +71,7 @@ public class ServiceTest {
     
     @Before
     public void setUp() {
-        mockService.initializeDatabase();
+        utilService.initializeDatabase();
     }
     
     @After
@@ -78,7 +79,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void tarkistaLepoAikaToiminto1() {
+    public void checkRestTimeTest1() {
         UserObject k = daoService.getOrCreateUser("ansponhed");
         Shiftcode koodi_AA1400 = daoService.getOrCreateShiftcode(new Shiftcode("AA1400","14:00",7));
         Shiftcode koodi_AA0545 = daoService.getOrCreateShiftcode(new Shiftcode("AA0545","05:45",7));
@@ -88,7 +89,7 @@ public class ServiceTest {
     }
     
     @Test
-    public void tarkistaLepoAikaToiminto2() {
+    public void checkRestTimeTest2() {
         UserObject k = daoService.getOrCreateUser("ansponhed");
         Shiftcode koodi_AA1800 = daoService.getOrCreateShiftcode(new Shiftcode("AA1800","18:00",7));
         Shiftcode koodi_AA0545 = daoService.getOrCreateShiftcode(new Shiftcode("AA0545","05:45",7));
@@ -99,7 +100,7 @@ public class ServiceTest {
     
     
     @Test
-    public void laskeKayttajat() {
+    public void countWorkersAfterImportTest() {
         long c = 0;
         try (Scanner tiedostonLukija = new Scanner(new File("data/kayttajat.csv"))) {
             while (tiedostonLukija.hasNextLine()) {                
@@ -114,7 +115,7 @@ public class ServiceTest {
     }
     
     @Test
-    public void laskeVuorokoodit() {
+    public void countShiftCodesAfterImportTest() {
         long c = 0;
         try (Scanner tiedostonLukija = new Scanner(new File("data/vuorokoodit.csv"))) {
             while (tiedostonLukija.hasNextLine()) {                
@@ -126,22 +127,7 @@ public class ServiceTest {
         }
         long count = shiftcodeRepository.count();
         assertEquals(true,(c == count));
-    }
-    
-    @Test
-    public void laskeVuorot() {
-        long c = 0;
-        try (Scanner tiedostonLukija = new Scanner(new File("data/vuorot.csv"))) {
-            while (tiedostonLukija.hasNextLine()) {                
-                String rivi = tiedostonLukija.nextLine();
-                c++;
-            }
-        } catch (Exception e) {
-            System.out.println("Virhe: " + e.getMessage());
-        }
-        long count = shiftRepository.count();
-        assertEquals(true,(c == count));
-    }
+    }        
             
     @Test
     public void loginTest() {
@@ -426,5 +412,19 @@ public class ServiceTest {
         daoService.deleteProposal(a2, b2);
         HashMap<Shift,List<Shift>> props = daoService.getOutboundProposals(a);
         assertTrue(props.isEmpty());
+    }
+    
+    //@Test
+    public void freeWorkersTest1() {
+        String tomorrow = LocalDate.now().plusDays(3).toString();
+        UserObject a = daoService.getOrCreateUser("test2");
+        UserObject b = daoService.getOrCreateUser("test3");
+        UserObject c = daoService.getOrCreateUser("test4");
+        Shiftcode koodi_AA0700 = daoService.getOrCreateShiftcode(new Shiftcode("AA0700", "07:00", 7));                       
+        Shift a2 = new Shift(koodi_AA0700, tomorrow, a);
+        a2 = shiftRepository.save(a2);       
+        daoService.generateShiftBuffer(LocalDate.now());
+        List<Shift> l = daoService.getFreeWorkers(a2);
+        assertTrue(l.size() == 2);
     }
 }

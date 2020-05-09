@@ -113,7 +113,7 @@ public class DaoService {
      * 'shiftBuffer'
      * @param middleDate middle of the period. The range will be +- 7 days.
      */
-    private void generateShiftBuffer(LocalDate middleDate) {
+    public void generateShiftBuffer(LocalDate middleDate) {
         final LocalDate startDate = middleDate.minusDays(7);
         this.shiftBuffer = new ArrayList[14];
         for (int i = 0; i < 14; i++) {
@@ -150,6 +150,7 @@ public class DaoService {
         Shift nextShift = shiftRepository.getNextShift(shiftDate, worker);        
         shiftRepository.findByDateOfShiftAndWorkerNot(shiftDate, worker)
                 .stream()
+                .filter((shift) -> !shift.getShiftCode().equals(s.getShiftCode()))
                 .filter((shift) -> (Contract.checkRestTimeBeforeAndAfter(prevShift, shift, nextShift)))
                 .forEachOrdered((shift) -> {
                     approvedShifts.add(shift);
@@ -278,7 +279,7 @@ public class DaoService {
         return proposals;
     }
 
-    private List<Shift> getFreeWorkers(Shift s) {
+    public List<Shift> getFreeWorkers(Shift s) {
         this.workers = userobjectRepository.findAll();
         Shiftcode noWork = shiftcodeRepository.findByCode("Vapaa");
         ArrayList<Shift> free = new ArrayList<>();

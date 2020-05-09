@@ -206,8 +206,6 @@ public class DomainiTest {
     @Test
     public void checkRestTimeBeforeAndAfterTest4() {
         UserObject k = new UserObject("kayttaja1");
-        Shiftcode vk1 = new Shiftcode("AA1800","18:00", 7);
-        Shiftcode vk2 = new Shiftcode("Vapaa","12:00", 0);
         Shiftcode vk3 = new Shiftcode("AA0545","05:45",7);
         Shift vuoro1 = new Shift(vk3,"2020-03-29",k);
         Shift vuoro2 = new Shift(vk3,"2020-03-30",k);

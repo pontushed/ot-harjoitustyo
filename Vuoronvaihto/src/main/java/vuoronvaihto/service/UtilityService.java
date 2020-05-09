@@ -6,6 +6,10 @@
 package vuoronvaihto.service;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,25 +65,48 @@ public class UtilityService {
         }
         System.out.println("Shiftcodes imported: " + c);
     }
-    
+            
     /**
-     * Import shifts.
+     * Generate shift list for demo.
      */
-    private void importShifts() {
-        int c = 0;
-        try (Scanner fileReader = new Scanner(new File("data/vuorot.csv"))) {
-            while (fileReader.hasNextLine()) {
-                String line = fileReader.nextLine();
-                String[] pieces = line.split(",");
-                Shiftcode v = shiftcodeRepository.findByCode(pieces[0]);
-                UserObject k = workerRepository.findByHandle(pieces[2]).get(0);
-                shiftRepository.save(new Shift(v, pieces[1], k));
-                c++;
+    private void generateShifts() {
+        List<UserObject> workers = workerRepository.findAll();
+        List<Shiftcode> shiftcodes = shiftcodeRepository.findAll();
+        int offset = 0, i = 0;        
+        LocalDate startDate = LocalDate.now();
+        LocalDate d = startDate;
+        while (!d.equals(startDate.plusDays(21))) {
+            List<Shift> shifts = new ArrayList<>();
+            for (UserObject u : workers) {
+                Shift s = getAutoShift(shiftcodes, i + offset, u, d);
+                if (s != null) {
+                    shifts.add(s);
+                }                                
+                offset = (offset > 5) ? 0 : offset + 1;
             }
-        } catch (Exception e) {
-            System.out.println("Error during shift import: " + e.getMessage());
+            shiftRepository.saveAll(shifts);
+            d = d.plusDays(1);
+            i = i > 4 ? 0 : i + 1;
         }
-        System.out.println("Shifts imported: " + c);
+    }
+    
+    /** Select shiftcode from the list of available shifts.
+     * Used by generateShifts()
+     * @param codes List of codes to choose from
+     * @param i index number
+     * @return Shift according to pattern
+     */
+    private Shift getAutoShift(List<Shiftcode> codes, int i, UserObject u, LocalDate d) {
+        Random r = new Random(1337);        
+        Shiftcode code = null; // free day
+        if (i < 3) {
+            code = codes.get(r.nextInt(6)); // morning shift
+        } else if (i < 5) {
+            code = codes.get(5 + r.nextInt(5)); // evening shift
+        } else if (i == 6) {
+            code = codes.get(codes.size() - 2); // night shift
+        }    
+        return (code == null ? null : new Shift(code, d.toString(), u));
     }
     
     /**
@@ -88,19 +115,19 @@ public class UtilityService {
     public void initializeDatabase() {
         if (workerRepository.count() == 0) {       
             System.out.println("Initalizing database...");
-            // Tyhjennä taulut
+            // Truncate the tables
             shiftRepository.deleteAll();
             shiftcodeRepository.deleteAll();
             workerRepository.deleteAll();
             System.out.println("Tables initialized.");
-            // Tuo käyttäjät
+            // Import workers
             importWorkers();
 
-            // Tuo vuorokoodit
+            // Import shiftcodes
             importShiftcodes();
 
-            // Tuo vuorot
-            importShifts();
+            // Generate shift list
+            generateShifts();
         }
     }
     
